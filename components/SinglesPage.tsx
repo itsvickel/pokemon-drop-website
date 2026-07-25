@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import type { Product } from "./ProductCard";
 import ProductDetailModal from "./ProductDetailModal";
+import ImageLightbox from "./ImageLightbox";
 import Footer from "./Footer";
 import GameTabBar from "./GameTabBar";
 import GameSubNav from "./GameSubNav";
@@ -68,6 +69,7 @@ export default function SinglesPage({ tcg }: Props) {
   const [inStockOnly, setInStockOnly] = useState(false);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [selected, setSelected] = useState<Product | null>(null);
+  const [zoomed, setZoomed] = useState<Product | null>(null);
   const [urlReady, setUrlReady] = useState(false);
 
   // ── URL state (read once, then write back) ───────────────────────────────
@@ -319,6 +321,9 @@ export default function SinglesPage({ tcg }: Props) {
                           src={p.card?.image_url || p.image_url}
                           alt=""
                           loading="lazy"
+                          style={{ cursor: "zoom-in" }}
+                          title="Click to zoom"
+                          onClick={(e) => { e.stopPropagation(); setZoomed(p); }}
                         />
                       ) : (
                         <div className={styles.artFallback}>🃏</div>
@@ -375,6 +380,13 @@ export default function SinglesPage({ tcg }: Props) {
 
         {selected && (
           <ProductDetailModal product={selected} tcg={tcg} onClose={() => setSelected(null)} />
+        )}
+        {zoomed && (
+          <ImageLightbox
+            src={(zoomed.card?.image_url || zoomed.image_url).replace("/normal/", "/large/")}
+            alt={zoomed.card?.card_name ?? zoomed.name}
+            onClose={() => setZoomed(null)}
+          />
         )}
 
         <Footer

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import AlertModal from "./AlertModal";
 import RestockModal from "./RestockModal";
+import ImageLightbox from "./ImageLightbox";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer
@@ -78,6 +79,10 @@ type Props = {
 export default function ProductDetailModal({ product, onClose, autoOpenAlert, tcg = "pokemon" }: Props) {
   const [showAlert,   setShowAlert]   = useState(false);
   const [showRestock, setShowRestock] = useState(false);
+  const [showZoom,    setShowZoom]    = useState(false);
+
+  // Scryfall card images have a larger variant — use it for zooming
+  const zoomSrc = (product.card?.image_url || product.image_url || "").replace("/normal/", "/large/");
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
@@ -117,7 +122,14 @@ export default function ProductDetailModal({ product, onClose, autoOpenAlert, tc
           <div className={styles.headerInfo}>
             {product.image_url && (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={product.image_url} alt={product.name} className={styles.headerImage} />
+              <img
+                src={product.image_url}
+                alt={product.name}
+                className={styles.headerImage}
+                style={{ cursor: "zoom-in" }}
+                title="Click to zoom"
+                onClick={(e) => { e.stopPropagation(); setShowZoom(true); }}
+              />
             )}
             <div className={styles.headerText}>
               <h2 className={styles.productName}>{product.name}</h2>
@@ -305,6 +317,9 @@ export default function ProductDetailModal({ product, onClose, autoOpenAlert, tc
       )}
       {showRestock && (
         <RestockModal product={product} tcg={tcg} onClose={() => setShowRestock(false)} />
+      )}
+      {showZoom && zoomSrc && (
+        <ImageLightbox src={zoomSrc} alt={product.name} onClose={() => setShowZoom(false)} />
       )}
     </div>
   );

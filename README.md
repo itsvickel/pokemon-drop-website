@@ -3,6 +3,14 @@
 Next.js 14 web app for tracking live Pokémon TCG and Magic: The Gathering prices across Canadian retailers.
 It reads `{tcg}/state.json` and `{tcg}/price_history.json` from a private GitHub repository and presents searchable, sortable product cards with 7-day trend context.
 
+## Sections
+
+Each game splits into dedicated sections (sub-nav under the game tabs):
+
+- `/{tcg}/sealed` — sealed product price tracking (default; old `/{tcg}` URLs redirect here)
+- `/{tcg}/singles` — single cards with Scryfall images and CAD-vs-market pricing
+- `/{tcg}/deals` — deals-only view (7-day price drops)
+
 ## Stack
 
 - Next.js 14 (pages router)

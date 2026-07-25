@@ -1,0 +1,105 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(4, 6, 10, 0.92);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: zoom-out;
+}
+
+.toolbar {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(22, 27, 34, 0.9);
+  border: 1px solid var(--border, #30363d);
+  border-radius: 10px;
+  padding: 5px 8px;
+  cursor: default;
+}
+
+.toolBtn {
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  border: 1px solid var(--border, #30363d);
+  background: transparent;
+  color: var(--text, #c9d1d9);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toolBtn:hover {
+  border-color: var(--game-border, #58a6ff);
+  color: #f0f6fc;
+}
+
+.closeBtn {
+  margin-left: 4px;
+}
+
+.zoomLabel {
+  font-size: 0.72rem;
+  color: var(--muted, #8b949e);
+  min-width: 42px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.image {
+  max-width: 88vw;
+  max-height: 86vh;
+  object-fit: contain;
+  cursor: zoom-in;
+  user-select: none;
+  touch-action: none;
+  border-radius: 8px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
+  transition: transform 0.12s ease-out;
+}
+
+.imageZoomed {
+  cursor: grab;
+}
+
+.imageZoomed:active {
+  cursor: grabbing;
+}
+
+.hint {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--muted, #8b949e);
+  background: rgba(22, 27, 34, 0.85);
+  border-radius: 14px;
+  padding: 5px 14px;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .hint {
+    display: none;
+  }
+
+  .image {
+    max-width: 96vw;
+  }
+}

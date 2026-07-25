@@ -8,6 +8,7 @@ import {
 import GameTabBar from "./GameTabBar";
 import AlertModal from "./AlertModal";
 import RestockModal from "./RestockModal";
+import ImageLightbox from "./ImageLightbox";
 import DealScoreBreakdown from "./DealScoreBreakdown";
 import type { Product } from "./ProductCard";
 import type { TcgSlug } from "../lib/tcg.config";
@@ -67,6 +68,7 @@ export default function ProductDetailPage({ tcg, groupKey }: Props) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showAlert, setShowAlert] = useState(false);
+  const [showZoom, setShowZoom] = useState(false);
   const [showRestock, setShowRestock] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -174,7 +176,14 @@ export default function ProductDetailPage({ tcg, groupKey }: Props) {
               {product.image_url && (
                 <div className={styles.heroImage}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={product.image_url} alt={product.name} className={styles.heroImg} />
+                  <img
+                    src={product.image_url}
+                    alt={product.name}
+                    className={styles.heroImg}
+                    style={{ cursor: "zoom-in" }}
+                    title="Click to zoom"
+                    onClick={() => setShowZoom(true)}
+                  />
                 </div>
               )}
               <div className={styles.heroInfo}>
@@ -372,6 +381,13 @@ export default function ProductDetailPage({ tcg, groupKey }: Props) {
       )}
       {showRestock && product && (
         <RestockModal product={product} tcg={tcg} onClose={() => setShowRestock(false)} />
+      )}
+      {showZoom && product?.image_url && (
+        <ImageLightbox
+          src={(product.card?.image_url || product.image_url).replace("/normal/", "/large/")}
+          alt={product.name}
+          onClose={() => setShowZoom(false)}
+        />
       )}
     </>
   );
