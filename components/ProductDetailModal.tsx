@@ -102,9 +102,10 @@ export default function ProductDetailModal({ product, onClose, autoOpenAlert, tc
   const allTimeHigh = prices.length ? Math.max(...prices) : product.price;
 
   const allRetailers = [
-    { retailer: product.retailer, price: product.price, url: product.url, in_stock: true },
+    { retailer: product.retailer, price: product.price, url: product.url, in_stock: product.in_stock, stock_qty: null as number | null },
     ...product.other_retailers,
   ].sort((a, b) => a.price - b.price);
+  const inStockCount = allRetailers.filter(r => r.in_stock).length;
   const packCount = computePackCount(product.name);
 
   return (
@@ -183,7 +184,12 @@ export default function ProductDetailModal({ product, onClose, autoOpenAlert, tc
 
           {/* Where to buy */}
           <section className={styles.section}>
-            <h3 className={styles.sectionTitle}>Where to Buy</h3>
+            <h3 className={styles.sectionTitle}>
+              Where to Buy
+              <span className={inStockCount === 0 ? styles.sectionCountNone : styles.sectionCountSome}>
+                {inStockCount}/{allRetailers.length} in stock
+              </span>
+            </h3>
             <div className={styles.retailerTable}>
               {allRetailers.map((r) => (
                 <div
@@ -193,7 +199,14 @@ export default function ProductDetailModal({ product, onClose, autoOpenAlert, tc
                   <div className={styles.retailerLeft}>
                     <span className={`${styles.stockDot} ${r.in_stock ? styles.inStock : styles.outOfStock}`} />
                     <div className={styles.retailerInfo}>
-                      <span className={styles.retailerName}>{r.retailer}</span>
+                      <div className={styles.retailerNameRow}>
+                        <span className={styles.retailerName}>{r.retailer}</span>
+                        <span className={`${styles.stockBadge} ${r.in_stock ? styles.stockBadgeIn : styles.stockBadgeOut}`}>
+                          {r.in_stock
+                            ? (r.stock_qty != null && r.stock_qty > 0 ? `${r.stock_qty} in stock` : "In Stock")
+                            : "Out of Stock"}
+                        </span>
+                      </div>
                       <span className={styles.shippingHint}>
                         {SHIPPING_THRESHOLDS[r.retailer] ?? "Check site"}
                       </span>
@@ -288,7 +301,7 @@ export default function ProductDetailModal({ product, onClose, autoOpenAlert, tc
       </div>
 
       {showAlert && (
-        <AlertModal product={product} onClose={() => setShowAlert(false)} />
+        <AlertModal product={product} tcg={tcg} onClose={() => setShowAlert(false)} />
       )}
       {showRestock && (
         <RestockModal product={product} tcg={tcg} onClose={() => setShowRestock(false)} />

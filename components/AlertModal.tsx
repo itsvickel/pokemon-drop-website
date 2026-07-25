@@ -1,16 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import type { Product } from "./ProductCard";
+import { getSavedEmail, saveEmail } from "../lib/savedEmail";
 import styles from "../styles/AlertModal.module.css";
 
 type Props = {
   product: Product;
   onClose: () => void;
+  tcg?: string;
 };
 
 type State = "idle" | "loading" | "success" | "error";
 
-export default function AlertModal({ product, onClose }: Props) {
-  const [email,     setEmail]     = useState("");
+export default function AlertModal({ product, onClose, tcg = "pokemon" }: Props) {
+  const [email,     setEmail]     = useState(getSavedEmail);
   const [threshold, setThreshold] = useState(
     String(Math.floor(product.price * 0.9 * 100) / 100)
   );
@@ -43,12 +45,14 @@ export default function AlertModal({ product, onClose }: Props) {
           product_name: product.name,
           email:        email.trim(),
           threshold:    parseFloat(threshold),
+          tcg,
         }),
       });
       if (!res.ok) {
         const data = await res.json() as { error?: string };
         throw new Error(data.error ?? `Server error ${res.status}`);
       }
+      saveEmail(email);
       setState("success");
     } catch (err) {
       setState("error");

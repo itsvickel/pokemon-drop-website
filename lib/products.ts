@@ -17,6 +17,8 @@ export type StatePrice = {
   is_preorder: boolean;
   updated: string;
   image_url?: string;
+  /** Set by newer scraper runs; absent in older data — the website falls back to extractCategory(). */
+  category?: "sealed" | "single";
 };
 
 export type StateRawProduct = {
@@ -30,6 +32,7 @@ export type StateRawProduct = {
   image_url?: string;
   last_seen: string;
   stock_qty?: number | null;
+  category?: "sealed" | "single";
 };
 
 export type StateJson = {
@@ -57,6 +60,31 @@ export type StockEvent = {
 
 export type StockChangesJson = {
   events: StockEvent[];
+};
+
+// ── Scryfall singles enrichment (written by tcg-drop-alert/singles_enrich.py) ─
+
+export type CardEnrichment = {
+  scryfall_id: string;
+  card_name: string;
+  set_code: string;
+  set_name: string;
+  collector_number: string;
+  image_url: string;
+  scryfall_uri: string;
+  treatment: string;
+  market_usd: number | null;
+  market_cad: number | null;
+  /** true when matched by name only (printing-level price may be off) */
+  approximate: boolean;
+};
+
+export type SinglesEnrichmentJson = {
+  generated_at: string;
+  fx_rate: number;
+  matched: number;
+  unmatched: number;
+  cards: Record<string, CardEnrichment>;
 };
 
 // ── Enriched output shapes ────────────────────────────────────────────────────
@@ -89,6 +117,9 @@ export type Product = {
   product_type: string;
   set_name: string;
   variant: string;
+  category: "sealed" | "single";
+  /** Scryfall card data — present only on enriched singles. */
+  card?: CardEnrichment;
   msrp: number | null;
   deal_score: number;
   last_restock_date: string | null;
@@ -237,6 +268,42 @@ export function extractProductType(name: string, config: TcgConfig): string {
   return "Other";
 }
 
+export type ProductCategory = "sealed" | "single";
+
+// Sealed SKU keywords — when present, the product is sealed regardless of
+// singles markers ("Secret Lair Commander Deck" is sealed).
+const SEALED_KEYWORDS =
+  /booster|\bbox\b|bundle|\bdecks?\b|display|\bcase\b|\bkits?\b|\btins?\b|blister|collection|elite trainer|\betb\b|prerelease|fat pack|jumpstart|\bpack\b|chest|starter/i;
+
+// Compound product terms strong enough to override the bracket-suffix singles
+// format — a card merely NAMED "Pack Rat" or "The Deck of Many Things" is not
+// sealed, but "Play Booster Box [Pre-Order]" is.
+const STRONG_SEALED =
+  /booster\s+(box|pack|display|bundle|case)|collector\s+booster|commander\s+deck|starter\s+deck|deck\s+box|elite\s+trainer|prerelease|\bdisplay\b/i;
+
+// Bracket suffixes that are order status, not a set name.
+const STATUS_BRACKET = /\[\s*(pre.?order|in.?store|pickup|sealed|new|damaged)\s*\]\s*$/i;
+
+// Card-level markers: collector numbers "(1589)" / "(SLP-004)" and premium
+// treatments that only appear on individual cards.
+const SINGLE_MARKERS =
+  /\((?:[A-Z]{2,4}-)?\d{1,4}\)|rainbow foil|etched foil|galaxy foil|confetti foil|raised foil|textured foil|borderless|extended art|showcase/i;
+
+// BinderPOS-style singles end with the set in brackets: "Blood Crypt [Secret Lair Drop Series]"
+const BRACKET_SET_SUFFIX = /\[[^\]]+\]\s*$/;
+
+export function extractCategory(name: string): ProductCategory {
+  if (BRACKET_SET_SUFFIX.test(name) && !STATUS_BRACKET.test(name)) {
+    const beforeBracket = name.replace(BRACKET_SET_SUFFIX, "");
+    return STRONG_SEALED.test(beforeBracket) ? "sealed" : "single";
+  }
+  // Names LEADING with "Secret Lair" are whole drops (sealed); broken-out
+  // singles lead with the card name instead.
+  if (/^(mtg[\s:-]*)?secret lair/i.test(name.trim())) return "sealed";
+  if (!SEALED_KEYWORDS.test(name) && SINGLE_MARKERS.test(name)) return "single";
+  return "sealed";
+}
+
 export function extractVariant(name: string): string {
   const lower = name.toLowerCase();
   if (/non.?foil/i.test(lower)) return "Non-Foil";
@@ -266,7 +333,8 @@ export function toApiResponse(
   state: StateJson,
   history: HistoryJson,
   stockChanges: StockChangesJson,
-  config: TcgConfig
+  config: TcgConfig,
+  enrichment?: SinglesEnrichmentJson | null
 ): ApiResponse {
   const sevenDaysAgoStr = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
   const twoDaysAgoMs    = Date.now() - 48 * 60 * 60 * 1000;
@@ -346,6 +414,8 @@ export function toApiResponse(
         product_type: extractProductType(bestPrice.name, config),
         set_name: extractSetName(bestPrice.name, config),
         variant: extractVariant(bestPrice.name),
+        category: bestPrice.category ?? extractCategory(bestPrice.name),
+        card: enrichment?.cards[group_key],
         msrp,
         deal_score,
         last_restock_date: lastRestockMap.get(group_key) ?? null,

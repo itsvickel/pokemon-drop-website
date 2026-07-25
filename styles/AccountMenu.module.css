@@ -1,0 +1,137 @@
+.wrap {
+  position: relative;
+}
+
+.signInBtn {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--game-text);
+  background: var(--game-bg);
+  border: 1px solid var(--game-border);
+  border-radius: 14px;
+  padding: 4px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.avatarBtn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--game-border);
+  background: var(--game-bg);
+  color: var(--game-text);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 200;
+  min-width: 230px;
+  background: var(--card, #161b22);
+  border: 1px solid var(--border, #30363d);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.menuEmail {
+  font-size: 0.72rem;
+  color: var(--muted);
+  padding: 6px 10px 8px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.menuItem {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text);
+  text-decoration: none;
+  padding: 7px 10px;
+  border-radius: 6px;
+  text-align: left;
+}
+
+.menuItem:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.menuButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  font-family: inherit;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 6px;
+}
+
+.formNote,
+.sentNote {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.45;
+}
+
+.sentNote {
+  padding: 8px 6px;
+}
+
+.sentNote strong {
+  color: var(--text);
+}
+
+.emailInput {
+  background: var(--bg, #0d1117);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 8px 11px;
+  font-size: 0.82rem;
+  color: var(--text);
+}
+
+.emailInput:focus {
+  outline: none;
+  border-color: var(--game);
+}
+
+.error {
+  font-size: 0.72rem;
+  color: var(--red, #f85149);
+}
+
+.submitBtn {
+  background: var(--game-bg);
+  border: 1px solid var(--game-border);
+  color: var(--game-text);
+  border-radius: 7px;
+  padding: 8px 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}

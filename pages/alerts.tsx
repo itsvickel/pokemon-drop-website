@@ -21,6 +21,8 @@ export default function AlertsPage() {
   const [data,    setData]    = useState<ManageAlertsResponse | null>(null);
   const [errMsg,  setErrMsg]  = useState("");
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editThreshold, setEditThreshold] = useState("");
 
   async function handleLookup(e: React.FormEvent) {
     e.preventDefault();
@@ -55,6 +57,41 @@ export default function AlertsPage() {
       }
     } catch (err) {
       alert(err instanceof Error ? err.message : "Failed to delete");
+    } finally {
+      setDeleting(null);
+    }
+  }
+
+  async function handleEditSave(alertItem: { id: string; group_key: string; product_name: string }) {
+    const newThreshold = parseFloat(editThreshold);
+    if (isNaN(newThreshold) || newThreshold <= 0) return;
+    setDeleting(alertItem.id);
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          group_key:    alertItem.group_key,
+          product_name: alertItem.product_name,
+          email:        email.trim(),
+          threshold:    newThreshold,
+        }),
+      });
+      if (!res.ok) {
+        const d = await res.json() as { error?: string };
+        throw new Error(d.error ?? `Error ${res.status}`);
+      }
+      if (data) {
+        setData({
+          ...data,
+          price_alerts: data.price_alerts.map(a =>
+            a.id === alertItem.id ? { ...a, threshold: newThreshold } : a
+          ),
+        });
+      }
+      setEditingId(null);
+    } catch (err) {
+      window.alert(err instanceof Error ? err.message : "Failed to update");
     } finally {
       setDeleting(null);
     }
@@ -117,23 +154,75 @@ export default function AlertsPage() {
                         <div key={a.id} className={styles.alertRow}>
                           <div className={styles.alertInfo}>
                             <span className={styles.alertName}>{a.product_name}</span>
-                            <span className={styles.alertDetail}>
-                              Alert when price drops below <strong>${a.threshold.toFixed(2)} CAD</strong>
-                            </span>
-                            {a.last_triggered && (
-                              <span className={styles.alertMeta}>
-                                Last triggered: {new Date(a.last_triggered).toLocaleDateString("en-CA")}
-                              </span>
+                            {editingId === a.id ? (
+                              <div className={styles.editRow}>
+                                <span className={styles.editLabel}>Notify below $</span>
+                                <input
+                                  className={styles.editInput}
+                                  type="number"
+                                  min="1"
+                                  max="9999"
+                                  step="0.01"
+                                  value={editThreshold}
+                                  onChange={(e) => setEditThreshold(e.target.value)}
+                                  disabled={deleting === a.id}
+                                  // eslint-disable-next-line jsx-a11y/no-autofocus
+                                  autoFocus
+                                />
+                                <span className={styles.editCad}>CAD</span>
+                              </div>
+                            ) : (
+                              <>
+                                <span className={styles.alertDetail}>
+                                  Alert when price drops below <strong>${a.threshold.toFixed(2)} CAD</strong>
+                                </span>
+                                {a.last_triggered && (
+                                  <span className={styles.alertMeta}>
+                                    Last triggered: {new Date(a.last_triggered).toLocaleDateString("en-CA")}
+                                  </span>
+                                )}
+                              </>
                             )}
                           </div>
-                          <button
-                            className={styles.deleteBtn}
-                            onClick={() => { void handleDelete("price", a.id, a.product_name); }}
-                            disabled={deleting === a.id}
-                            type="button"
-                          >
-                            {deleting === a.id ? "…" : "Remove"}
-                          </button>
+                          {editingId === a.id ? (
+                            <div className={styles.editActions}>
+                              <button
+                                className={styles.saveBtn}
+                                onClick={() => { void handleEditSave(a); }}
+                                disabled={deleting === a.id || !editThreshold}
+                                type="button"
+                              >
+                                {deleting === a.id ? "…" : "Save"}
+                              </button>
+                              <button
+                                className={styles.cancelBtn}
+                                onClick={() => setEditingId(null)}
+                                disabled={deleting === a.id}
+                                type="button"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          ) : (
+                            <div className={styles.editActions}>
+                              <button
+                                className={styles.editBtn}
+                                onClick={() => { setEditingId(a.id); setEditThreshold(String(a.threshold)); }}
+                                disabled={!!deleting}
+                                type="button"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                className={styles.deleteBtn}
+                                onClick={() => { void handleDelete("price", a.id, a.product_name); }}
+                                disabled={deleting === a.id}
+                                type="button"
+                              >
+                                {deleting === a.id ? "…" : "Remove"}
+                              </button>
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>

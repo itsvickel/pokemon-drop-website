@@ -499,6 +499,12 @@
   color: #8b949e;
 }
 
+.commanderAvgPrice {
+  font-size: 0.65rem;
+  color: #a371f7;
+  opacity: 0.85;
+}
+
 .resultsHeader {
   margin-top: 18px;
   display: flex;

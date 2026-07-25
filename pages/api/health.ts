@@ -1,10 +1,19 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { fetchGameDataWithSource, type DataSource } from "../../lib/dataFetcher";
+import type { SinglesEnrichmentJson } from "../../lib/products";
 
 type RetailerHealth = {
   retailer: string;
   productCount: number;
   inStockCount: number;
   lastSeen: string | null;
+};
+
+type SinglesHealth = {
+  matched: number;
+  unmatched: number;
+  generatedAt: string;
+  ageHours: number;
 };
 
 type GameHealth = {
@@ -14,6 +23,8 @@ type GameHealth = {
   totalInStock: number;
   generatedAt: string;
   stateAge: string;
+  dataSource: DataSource;
+  singles: SinglesHealth | null;
 };
 
 type HealthResponse = {
@@ -35,19 +46,22 @@ type StateJson = {
   generated_at?: string;
 };
 
-async function fetchStateJson(repo: string, token: string, path: string): Promise<StateJson> {
-  const url = `https://api.github.com/repos/${repo}/contents/${path}`;
-  const res = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: "application/vnd.github.raw+json",
-    },
-  });
-  if (!res.ok) throw new Error(`${path}: ${res.status}`);
-  return res.json() as Promise<StateJson>;
+function buildSinglesHealth(enrichment: SinglesEnrichmentJson | null): SinglesHealth | null {
+  if (!enrichment?.generated_at) return null;
+  return {
+    matched: enrichment.matched ?? 0,
+    unmatched: enrichment.unmatched ?? 0,
+    generatedAt: enrichment.generated_at,
+    ageHours: Math.round((Date.now() - new Date(enrichment.generated_at).getTime()) / 3600000),
+  };
 }
 
-function buildGameHealth(tcg: string, state: StateJson): GameHealth {
+function buildGameHealth(
+  tcg: string,
+  state: StateJson,
+  dataSource: DataSource,
+  singles: SinglesHealth | null
+): GameHealth {
   const byRetailer = new Map<string, RetailerHealth>();
 
   for (const raw of Object.values(state.products ?? {})) {
@@ -84,6 +98,8 @@ function buildGameHealth(tcg: string, state: StateJson): GameHealth {
     totalInStock,
     generatedAt: state.generated_at ?? "",
     stateAge,
+    dataSource,
+    singles,
   };
 }
 
@@ -91,25 +107,29 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<HealthResponse | ErrorResponse>
 ) {
-  const repo  = process.env.GITHUB_REPO;
-  const token = process.env.GITHUB_TOKEN;
+  const hasGithub = !!(process.env.GITHUB_REPO && process.env.GITHUB_TOKEN);
+  const hasBlob   = !!process.env.BLOB_BASE_URL;
 
-  if (!repo || !token) {
-    res.status(500).json({ error: "Missing GITHUB_REPO or GITHUB_TOKEN" });
+  if (!hasGithub && !hasBlob) {
+    res.status(500).json({ error: "Missing GITHUB_REPO/GITHUB_TOKEN (or BLOB_BASE_URL)" });
     return;
   }
 
   try {
-    const [pokemonState, mtgState] = await Promise.all([
-      fetchStateJson(repo, token, "state.json"),
-      fetchStateJson(repo, token, "mtg/state.json").catch(() => ({} as StateJson)),
+    const emptyState = { data: {} as StateJson, source: "github" as DataSource };
+    const [pokemonState, mtgState, mtgEnrichment] = await Promise.all([
+      fetchGameDataWithSource<StateJson>("", "state.json"),
+      fetchGameDataWithSource<StateJson>("mtg", "state.json").catch(() => emptyState),
+      fetchGameDataWithSource<SinglesEnrichmentJson>("mtg", "singles_enrichment.json")
+        .then((r) => r.data)
+        .catch(() => null),
     ]);
 
     res.setHeader("Cache-Control", "s-maxage=120, stale-while-revalidate=60");
     res.status(200).json({
       games: [
-        buildGameHealth("pokemon", pokemonState),
-        buildGameHealth("mtg", mtgState),
+        buildGameHealth("pokemon", pokemonState.data, pokemonState.source, null),
+        buildGameHealth("mtg", mtgState.data, mtgState.source, buildSinglesHealth(mtgEnrichment)),
       ],
       fetchedAt: new Date().toISOString(),
     });

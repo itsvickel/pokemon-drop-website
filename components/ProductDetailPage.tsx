@@ -368,7 +368,7 @@ export default function ProductDetailPage({ tcg, groupKey }: Props) {
       </main>
 
       {showAlert && product && (
-        <AlertModal product={product} onClose={() => setShowAlert(false)} />
+        <AlertModal product={product} tcg={tcg} onClose={() => setShowAlert(false)} />
       )}
       {showRestock && product && (
         <RestockModal product={product} tcg={tcg} onClose={() => setShowRestock(false)} />

@@ -10,6 +10,13 @@ type RetailerHealth = {
   lastSeen: string | null;
 };
 
+type SinglesHealth = {
+  matched: number;
+  unmatched: number;
+  generatedAt: string;
+  ageHours: number;
+};
+
 type GameHealth = {
   tcg: string;
   retailerStats: RetailerHealth[];
@@ -17,6 +24,8 @@ type GameHealth = {
   totalInStock: number;
   generatedAt: string;
   stateAge: string;
+  dataSource?: "blob" | "github";
+  singles?: SinglesHealth | null;
 };
 
 type HealthData = {
@@ -101,6 +110,20 @@ export default function HealthPage() {
                 <span className={styles.summaryChip}>
                   State: <strong>{game.stateAge}</strong>
                 </span>
+                {game.dataSource && (
+                  <span className={styles.summaryChip} title="Where the site read this data from">
+                    Source: <strong>{game.dataSource === "blob" ? "⚡ Blob" : "GitHub"}</strong>
+                  </span>
+                )}
+                {game.singles && (
+                  <span className={styles.summaryChip} title="Scryfall singles enrichment">
+                    Singles: <strong>{game.singles.matched}</strong> matched
+                    {game.singles.unmatched > 0 && <> / {game.singles.unmatched} unmatched</>}
+                    {" · "}{game.singles.ageHours < 48
+                      ? `${game.singles.ageHours}h ago`
+                      : `${Math.round(game.singles.ageHours / 24)}d ago`}
+                  </span>
+                )}
               </div>
             </div>
 

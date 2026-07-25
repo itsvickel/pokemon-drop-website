@@ -6,6 +6,7 @@ import styles from "../styles/Card.module.css";
 import DealScoreBreakdown from "./DealScoreBreakdown";
 import { SHIPPING_THRESHOLDS } from "../lib/shipping";
 import { computePackCount } from "../lib/packCount";
+import type { CardEnrichment } from "../lib/products";
 
 type HistoryEntry = {
   date: string;
@@ -18,6 +19,7 @@ export type RetailerPrice = {
   price: number;
   url: string;
   in_stock: boolean;
+  stock_qty: number | null;
 };
 
 export type Product = {
@@ -40,8 +42,13 @@ export type Product = {
   product_type: string;
   set_name: string;
   variant: string;
+  /** Optional so older cached API payloads without it keep rendering. */
+  category?: "sealed" | "single";
+  /** Scryfall card data — present only on enriched singles. */
+  card?: CardEnrichment;
   msrp: number | null;
   deal_score: number;
+  last_restock_date?: string | null;
 };
 
 type ProductCardProps = {
@@ -58,6 +65,16 @@ type ProductCardProps = {
 
 
 const STALE_THRESHOLD_MS = 6 * 60 * 60 * 1000;
+
+function formatRestockAge(isoDate: string): string {
+  const days = Math.floor((Date.now() - new Date(isoDate).getTime()) / 86_400_000);
+  if (days === 0) return "today";
+  if (days === 1) return "yesterday";
+  if (days < 7)  return `${days} days ago`;
+  const weeks = Math.floor(days / 7);
+  if (weeks < 5) return `${weeks} week${weeks > 1 ? "s" : ""} ago`;
+  return `${Math.floor(days / 30)} months ago`;
+}
 
 export function stripTrackingParams(input: string): string {
   try {
@@ -112,6 +129,11 @@ export default function ProductCard({
   const isActiveFilter = activeRetailer === product.retailer;
   const isStale        = Date.now() - new Date(product.updated).getTime() > STALE_THRESHOLD_MS;
 
+  const allRetailerStocks = [product.in_stock, ...product.other_retailers.map(r => r.in_stock)];
+  const inStockCount    = allRetailerStocks.filter(Boolean).length;
+  const totalRetailers  = allRetailerStocks.length;
+  const soldOutEverywhere = inStockCount === 0;
+
   return (
     <>
       {/* Whole card is clickable — stop propagation on interactive children */}
@@ -121,6 +143,7 @@ export default function ProductCard({
           styles.cardClickable,
           isAllTimeLow         ? styles.allTimeLowCard    : "",
           product.is_preorder  ? styles.preorderTopBorder : "",
+          soldOutEverywhere    ? styles.soldOutCard       : "",
         ].filter(Boolean).join(" ")}
         onClick={() => setShowDetail(true)}
         role="button"
@@ -224,6 +247,11 @@ export default function ProductCard({
 
         <p className={styles.price}>
           {`$${product.price.toFixed(2)} CAD`}
+          {product.msrp !== null && product.msrp > product.price && (
+            <span className={styles.msrpStrike} title="MSRP reference price">
+              {`$${product.msrp.toFixed(2)}`}
+            </span>
+          )}
           {packCount && (
             <span className={styles.perPack}>
               {` · $${(product.price / packCount).toFixed(2)}/pack`}
@@ -249,6 +277,45 @@ export default function ProductCard({
           </button>
           <span className={styles.shippingLabel}>{getShippingThreshold(product.retailer)}</span>
         </div>
+
+        {/* Stock count + per-store breakdown */}
+        {totalRetailers > 0 && (
+          <div className={styles.stockInfoRow}>
+            <div className={styles.stockHeader}>
+              <span className={[
+                styles.stockChip,
+                soldOutEverywhere
+                  ? styles.stockChipRed
+                  : inStockCount / totalRetailers >= 0.5
+                    ? styles.stockChipGreen
+                    : styles.stockChipAmber,
+              ].join(" ")}>
+                {inStockCount}/{totalRetailers} stores in stock
+              </span>
+              {soldOutEverywhere && product.last_restock_date && (
+                <span className={styles.lastRestockLabel}>
+                  last in stock {formatRestockAge(product.last_restock_date)}
+                </span>
+              )}
+            </div>
+            <div className={styles.storeStockList}>
+              {[
+                { retailer: product.retailer, in_stock: product.in_stock },
+                ...product.other_retailers.map(r => ({ retailer: r.retailer, in_stock: r.in_stock })),
+              ].slice(0, 5).map(r => (
+                <span
+                  key={r.retailer}
+                  className={`${styles.storeStockItem} ${r.in_stock ? styles.storeStockIn : styles.storeStockOut}`}
+                >
+                  {r.in_stock ? "●" : "○"} {r.retailer}
+                </span>
+              ))}
+              {totalRetailers > 5 && (
+                <span className={styles.storeStockMore}>+{totalRetailers - 5} more</span>
+              )}
+            </div>
+          </div>
+        )}
 
         <Sparkline points={product.history} />
 

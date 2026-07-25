@@ -300,12 +300,17 @@
   min-width: 0;
 }
 
+.retailerNameRow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
 .retailerName {
   font-size: 0.9rem;
   color: #c9d1d9;
-  overflow: hidden;
   white-space: nowrap;
-  text-overflow: ellipsis;
 }
 
 .shippingHint {
@@ -363,6 +368,45 @@
 .outOfStockBuy:hover {
   background: rgba(110, 118, 129, 0.08);
   border-color: rgba(110, 118, 129, 0.5);
+}
+
+/* ── Stock badge per retailer row ── */
+.stockBadge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.stockBadgeIn {
+  color: #3fb950;
+  background: rgba(63, 185, 80, 0.1);
+  border: 1px solid rgba(63, 185, 80, 0.3);
+}
+
+.stockBadgeOut {
+  color: #8b949e;
+  background: rgba(110, 118, 129, 0.08);
+  border: 1px solid rgba(110, 118, 129, 0.22);
+}
+
+/* ── Section title count ── */
+.sectionCountSome {
+  margin-left: 8px;
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: #3fb950;
+  opacity: 0.9;
+}
+
+.sectionCountNone {
+  margin-left: 8px;
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: #f85149;
+  opacity: 0.9;
 }
 
 /* ── Price chart ───────────────────────────────────────── */

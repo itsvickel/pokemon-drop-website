@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { randomUUID } from "crypto";
+import { randomUUID, createHash } from "crypto";
 import { rateLimit, getClientIp } from "../../lib/rateLimit";
+import { getServiceSupabase } from "../../lib/supabase";
 
 export type Alert = {
   id: string;
@@ -39,6 +40,52 @@ async function readAlerts(): Promise<{ data: AlertsFile; sha: string }> {
   return { data: JSON.parse(text) as AlertsFile, sha: metaJson.sha };
 }
 
+/**
+ * Mirror an alert into Supabase user_alerts so the /api/check-alerts cron can
+ * evaluate it. Best-effort — alerts.json stays the compatibility source for
+ * the Python tracker, so a Supabase failure must not fail the request.
+ *
+ * Threshold edits update only the mutable columns: callers that don't know
+ * the game (e.g. the /alerts manage page) must not clobber a correct `tcg`,
+ * and last_triggered belongs to the cron.
+ */
+async function mirrorToSupabase(alert: Alert, tcg: string): Promise<void> {
+  const db = getServiceSupabase();
+  if (!db) return;
+
+  const { data: updated, error: updateError } = await db
+    .from("user_alerts")
+    .update({ threshold: alert.threshold, active: alert.active, product_name: alert.product_name })
+    .eq("id", alert.id)
+    .select("id");
+  if (updateError) {
+    console.error("[subscribe] Supabase mirror update failed:", updateError.message);
+    return;
+  }
+  if (updated && updated.length > 0) return;
+
+  const emailHash = createHash("sha256").update(alert.email.toLowerCase()).digest("hex");
+  const { error } = await db.from("user_alerts").insert({
+    id: alert.id,
+    email_hash: emailHash,
+    email: alert.email,
+    tcg,
+    group_key: alert.group_key,
+    product_name: alert.product_name,
+    threshold: alert.threshold,
+    active: alert.active,
+    last_triggered: alert.last_triggered,
+  });
+  if (error) console.error("[subscribe] Supabase mirror insert failed:", error.message);
+}
+
+async function deactivateInSupabase(id: string): Promise<void> {
+  const db = getServiceSupabase();
+  if (!db) return;
+  const { error } = await db.from("user_alerts").update({ active: false }).eq("id", id);
+  if (error) console.error("[subscribe] Supabase deactivate failed:", error.message);
+}
+
 async function writeAlerts(data: AlertsFile, sha: string): Promise<void> {
   const content = Buffer.from(JSON.stringify(data, null, 2) + "\n").toString("base64");
   const res = await fetch(API_BASE, {
@@ -75,9 +122,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   // POST — subscribe
   if (req.method === "POST") {
-    const { group_key, product_name, email, threshold } = req.body as {
-      group_key?: string; product_name?: string; email?: string; threshold?: number;
+    const { group_key, product_name, email, threshold, tcg } = req.body as {
+      group_key?: string; product_name?: string; email?: string; threshold?: number; tcg?: string;
     };
+    const gameTcg = tcg === "mtg" || tcg === "onepiece" || tcg === "lorcana" ? tcg : "pokemon";
 
     if (!group_key || !product_name || !email || threshold == null) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -99,6 +147,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // Update threshold instead of creating a new alert
       duplicate.threshold = threshold;
       await writeAlerts(data, sha);
+      await mirrorToSupabase(duplicate, gameTcg);
       return res.status(200).json({ id: duplicate.id, updated: true });
     }
 
@@ -115,6 +164,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     data.alerts.push(alert);
     await writeAlerts(data, sha);
+    await mirrorToSupabase(alert, gameTcg);
     return res.status(201).json({ id: alert.id, message: "Alert created" });
   }
 
@@ -129,6 +179,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     alert.active = false;
     await writeAlerts(data, sha);
+    await deactivateInSupabase(id);
     return res.status(200).json({ message: "Unsubscribed" });
   }
 

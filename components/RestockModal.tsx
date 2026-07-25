@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { Product } from "./ProductCard";
+import { getSavedEmail, saveEmail } from "../lib/savedEmail";
 import styles from "../styles/RestockModal.module.css";
 
 type Props = {
@@ -11,7 +12,7 @@ type Props = {
 type State = "idle" | "loading" | "success" | "error";
 
 export default function RestockModal({ product, onClose, tcg = "pokemon" }: Props) {
-  const [email,  setEmail]  = useState("");
+  const [email,  setEmail]  = useState(getSavedEmail);
   const [state,  setState]  = useState<State>("idle");
   const [errMsg, setErrMsg] = useState("");
   const emailRef = useRef<HTMLInputElement>(null);
@@ -46,6 +47,7 @@ export default function RestockModal({ product, onClose, tcg = "pokemon" }: Prop
         const data = await res.json() as { error?: string };
         throw new Error(data.error ?? `Server error ${res.status}`);
       }
+      saveEmail(email);
       setState("success");
     } catch (err) {
       setState("error");

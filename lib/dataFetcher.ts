@@ -40,25 +40,39 @@ async function fetchFromGitHub<T>(filePath: string): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+export type DataSource = "blob" | "github";
+
 /**
- * Fetch a game data file, preferring Vercel Blob when available.
+ * Fetch a game data file, preferring Vercel Blob when available, and report
+ * which source served it (surfaced on the health dashboard).
  *
  * @param gameFolder - e.g. "" (pokemon root) or "mtg"
  * @param fileName   - e.g. "state.json"
  */
-export async function fetchGameData<T>(gameFolder: string, fileName: string): Promise<T> {
+export async function fetchGameDataWithSource<T>(
+  gameFolder: string,
+  fileName: string
+): Promise<{ data: T; source: DataSource }> {
   const filePath = gameFolder ? `${gameFolder}/${fileName}` : fileName;
 
   if (BLOB_BASE_URL) {
     try {
-      return await fetchFromBlob<T>(filePath);
+      return { data: await fetchFromBlob<T>(filePath), source: "blob" };
     } catch (err) {
       // Log but fall through to GitHub
       console.warn(`[dataFetcher] Blob miss for ${filePath}:`, err);
     }
   }
 
-  return fetchFromGitHub<T>(filePath);
+  return { data: await fetchFromGitHub<T>(filePath), source: "github" };
+}
+
+/**
+ * Fetch a game data file, preferring Vercel Blob when available.
+ */
+export async function fetchGameData<T>(gameFolder: string, fileName: string): Promise<T> {
+  const { data } = await fetchGameDataWithSource<T>(gameFolder, fileName);
+  return data;
 }
 
 /*

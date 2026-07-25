@@ -1,7 +1,7 @@
 import type { GetServerSideProps } from "next";
 
 export const getServerSideProps: GetServerSideProps = async () => ({
-  redirect: { destination: "/pokemon", permanent: false },
+  redirect: { destination: "/pokemon/sealed", permanent: false },
 });
 
 export default function IndexPage() {

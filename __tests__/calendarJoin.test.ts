@@ -25,6 +25,7 @@ function makeProduct(overrides: Partial<Product>): Product {
     product_type: "Elite Trainer Box",
     set_name: "Mega Evolution",
     variant: "",
+    category: "sealed",
     msrp: null,
     deal_score: 0,
     last_restock_date: null,

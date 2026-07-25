@@ -159,3 +159,89 @@
   color: #8b949e;
   margin: 0;
 }
+
+/* ── Edit threshold ── */
+
+.editActions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.editBtn {
+  background: rgba(88, 166, 255, 0.08);
+  border: 1px solid rgba(88, 166, 255, 0.3);
+  border-radius: 6px;
+  color: #58a6ff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.editBtn:hover:not(:disabled) {
+  background: rgba(88, 166, 255, 0.18);
+  border-color: #58a6ff;
+}
+.editBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.editRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.editLabel {
+  font-size: 0.82rem;
+  color: #8b949e;
+  white-space: nowrap;
+}
+
+.editInput {
+  width: 80px;
+  background: #0d1117;
+  border: 1px solid #58a6ff;
+  border-radius: 6px;
+  color: #c9d1d9;
+  font-size: 0.88rem;
+  padding: 4px 8px;
+  text-align: right;
+}
+.editInput:focus { outline: none; border-color: #79c0ff; }
+
+.editCad {
+  font-size: 0.78rem;
+  color: #8b949e;
+}
+
+.saveBtn {
+  background: rgba(63, 185, 80, 0.12);
+  border: 1px solid rgba(63, 185, 80, 0.4);
+  border-radius: 6px;
+  color: #d2f9d7;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.saveBtn:hover:not(:disabled) { background: rgba(63, 185, 80, 0.22); }
+.saveBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.cancelBtn {
+  background: rgba(139, 148, 158, 0.1);
+  border: 1px solid rgba(139, 148, 158, 0.25);
+  border-radius: 6px;
+  color: #8b949e;
+  font-size: 0.82rem;
+  padding: 6px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.cancelBtn:hover:not(:disabled) { background: rgba(139, 148, 158, 0.2); }
+.cancelBtn:disabled { opacity: 0.5; cursor: not-allowed; }

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useWishlist } from "../hooks/useWishlist";
 import type { TcgSlug } from "../lib/tcg.config";
+import AccountMenu from "./AccountMenu";
 import styles from "../styles/GameTabBar.module.css";
 
 type Props = { tcg: TcgSlug };
@@ -17,7 +18,7 @@ export default function GameTabBar({ tcg }: Props) {
           </span>
           <div className={styles.tabs} role="tablist">
             <Link
-              href="/pokemon"
+              href="/pokemon/sealed"
               role="tab"
               aria-selected={tcg === "pokemon"}
               className={`${styles.tab} ${tcg === "pokemon" ? styles.tabActivePokemon : ""}`}
@@ -26,7 +27,7 @@ export default function GameTabBar({ tcg }: Props) {
               Pokémon
             </Link>
             <Link
-              href="/mtg"
+              href="/mtg/sealed"
               role="tab"
               aria-selected={tcg === "mtg"}
               className={`${styles.tab} ${tcg === "mtg" ? styles.tabActiveMtg : ""}`}
@@ -65,6 +66,7 @@ export default function GameTabBar({ tcg }: Props) {
               ♥ My List ({wishlist.count})
             </Link>
           )}
+          <AccountMenu />
           <div className={styles.live}>
             <span className={styles.pulseDot} />
             <span className={styles.liveText}>Live</span>

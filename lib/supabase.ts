@@ -15,6 +15,7 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 let _client: SupabaseClient | null = null;
+let _serviceClient: SupabaseClient | null = null;
 
 export function getSupabaseClient(): SupabaseClient | null {
   if (typeof window !== "undefined") return null; // server-side only
@@ -26,6 +27,23 @@ export function getSupabaseClient(): SupabaseClient | null {
     );
   }
   return _client;
+}
+
+/**
+ * Service-role client — bypasses RLS. Server-side only; used by the
+ * alert-evaluation cron and dual-writes that span users.
+ */
+export function getServiceSupabase(): SupabaseClient | null {
+  if (typeof window !== "undefined") return null;
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_KEY) return null;
+  if (!_serviceClient) {
+    _serviceClient = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_KEY,
+      { auth: { persistSession: false } }
+    );
+  }
+  return _serviceClient;
 }
 
 export type PriceHistoryRow = {

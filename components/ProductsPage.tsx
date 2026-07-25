@@ -6,6 +6,7 @@ import ProductCard, { Product } from "./ProductCard";
 import ProductDetailModal from "./ProductDetailModal";
 import Footer from "./Footer";
 import GameTabBar from "./GameTabBar";
+import GameSubNav, { type GameSection } from "./GameSubNav";
 import NewsletterSignup from "./NewsletterSignup";
 import { useWishlist } from "../hooks/useWishlist";
 import styles from "../styles/Home.module.css";
@@ -55,9 +56,9 @@ function isAtAllTimeLow(product: Product): boolean {
   return product.price <= product.all_time_low + 0.0001;
 }
 
-type Props = { tcg: TcgSlug };
+type Props = { tcg: TcgSlug; view?: GameSection };
 
-export default function ProductsPage({ tcg }: Props) {
+export default function ProductsPage({ tcg, view = "sealed" }: Props) {
   const config  = TCG_CONFIGS[tcg];
   const router  = useRouter();
   const wishlist = useWishlist();
@@ -87,7 +88,7 @@ export default function ProductsPage({ tcg }: Props) {
   const [priceMax,      setPriceMax]      = useState<string>("");
   const [inStockOnly,   setInStockOnly]   = useState(false);
   const [hidePreorders, setHidePreorders] = useState(false);
-  const [dealsOnly,     setDealsOnly]     = useState(false);
+  const [dealsOnly,     setDealsOnly]     = useState(view === "deals");
   const [lowOnly,       setLowOnly]       = useState(false);
   const [newOnly,       setNewOnly]       = useState(false);
   const [wishlistOnly,  setWishlistOnly]  = useState(false);
@@ -141,30 +142,45 @@ export default function ProductsPage({ tcg }: Props) {
   }, [query, sort, retailer, language, productType, setName, priceMin, priceMax, // eslint-disable-line react-hooks/exhaustive-deps
       inStockOnly, hidePreorders, dealsOnly, lowOnly, newOnly, wishlistOnly, urlReady, compareList]);
 
-  const products = data?.products ?? [];
+  const allProducts = data?.products ?? [];
+
+  // ── Sealed / Singles view split ──────────────────────────────────────────
+  // Older cached payloads may lack `category`; treat those as sealed.
+  const singlesCount = useMemo(
+    () => allProducts.filter((p) => p.category === "single").length,
+    [allProducts]
+  );
+  const sealedCount = allProducts.length - singlesCount;
+  const products = useMemo(
+    () =>
+      view === "singles"
+        ? allProducts.filter((p) => p.category === "single")
+        : allProducts.filter((p) => p.category !== "single"),
+    [allProducts, view]
+  );
 
   // ── Auto-open detail modal from ?alert=group_key ─────────────────────────
   useEffect(() => {
-    if (!pendingAlertKey.current || products.length === 0) return;
-    const match = products.find((p) => p.group_key === pendingAlertKey.current);
+    if (!pendingAlertKey.current || allProducts.length === 0) return;
+    const match = allProducts.find((p) => p.group_key === pendingAlertKey.current);
     if (match) {
       setAutoAlertProduct(match);
       pendingAlertKey.current = null;
     }
-  }, [products]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [allProducts]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Restore compare list from URL once products are loaded
   useEffect(() => {
-    if (!router.isReady || products.length === 0) return;
+    if (!router.isReady || allProducts.length === 0) return;
     const raw = router.query.compare;
     if (typeof raw !== "string" || !raw) return;
     const keys = raw.split(",").filter(Boolean);
     const matched = keys
-      .map((k) => products.find((p) => p.group_key === k))
+      .map((k) => allProducts.find((p) => p.group_key === k))
       .filter((p): p is Product => p !== undefined)
       .slice(0, 3);
     if (matched.length > 0) setCompareList(matched);
-  }, [router.isReady, products]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [router.isReady, allProducts]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Reset pagination whenever any filter changes
   useEffect(() => {
@@ -218,16 +234,25 @@ export default function ProductsPage({ tcg }: Props) {
     return counts;
   }, [products]);
 
-  // MTG-only: sets that have commander decks, sorted by count desc
+  // MTG-only: sets that have commander decks, sorted by count desc, with avg price
   const commanderSets = useMemo(() => {
     if (tcg !== "mtg") return [];
-    const counts: Record<string, number> = {};
+    const setData: Record<string, { count: number; totalPrice: number }> = {};
     for (const p of products) {
       if (p.product_type === "Commander Deck" && p.set_name) {
-        counts[p.set_name] = (counts[p.set_name] ?? 0) + 1;
+        const d = setData[p.set_name] ?? { count: 0, totalPrice: 0 };
+        d.count++;
+        d.totalPrice += p.price;
+        setData[p.set_name] = d;
       }
     }
-    return Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([name, count]) => ({ name, count }));
+    return Object.entries(setData)
+      .sort((a, b) => b[1].count - a[1].count)
+      .map(([name, { count, totalPrice }]) => ({
+        name,
+        count,
+        avgPrice: Math.round(totalPrice / count),
+      }));
   }, [tcg, products]);
 
   // ── Stats ────────────────────────────────────────────────────────────────
@@ -321,23 +346,35 @@ export default function ProductsPage({ tcg }: Props) {
     });
   }
 
+  const viewNoun = view === "singles" ? "singles" : "sealed product";
+  const viewTitle =
+    view === "singles" ? `${config.displayName} Singles Price Tracker`
+    : view === "deals" ? `${config.displayName} Deals — Price Drops`
+    : `${config.displayName} Price Tracker`;
+
   return (
     <>
       <Head>
-        <title>{config.displayName} Price Tracker — Best Canadian Prices</title>
+        <title>{`${viewTitle} — Best Canadian Prices`}</title>
         <meta
           name="description"
-          content={`Track live ${config.displayName} sealed product prices across 50+ Canadian retailers. Compare prices and find the best deals. Updated every 3 hours.`}
+          content={`Track live ${config.displayName} ${viewNoun} prices across 50+ Canadian retailers. Compare prices and find the best deals. Updated every 3 hours.`}
         />
-        <meta property="og:title" content={`${config.displayName} Price Tracker — Best Canadian Prices`} />
+        <meta property="og:title" content={`${viewTitle} — Best Canadian Prices`} />
         <meta
           property="og:description"
-          content={`Live ${config.displayName} sealed product prices across 50+ Canadian retailers. Always find the best deal.`}
+          content={`Live ${config.displayName} ${viewNoun} prices across 50+ Canadian retailers. Always find the best deal.`}
         />
       </Head>
 
-      {/* ── Game tab bar ──────────────────────────────────────────────────── */}
+      {/* ── Game tab bar + section sub-nav ────────────────────────────────── */}
       <GameTabBar tcg={tcg} />
+      <GameSubNav
+        tcg={tcg}
+        active={view}
+        sealedCount={data ? sealedCount : undefined}
+        singlesCount={data ? singlesCount : undefined}
+      />
 
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
       <section className={styles.hero}>
@@ -348,7 +385,7 @@ export default function ProductsPage({ tcg }: Props) {
           </div>
           <h1 className={styles.heroTitle}>{config.displayName}</h1>
           <p className={styles.heroTagline}>
-            Track sealed product prices across {stats.retailers || "50"}+ Canadian retailers.
+            Track {viewNoun} prices across {stats.retailers || "50"}+ Canadian retailers.
             Prices updated automatically every 3 hours.
           </p>
           <div className={styles.heroStats}>
@@ -604,7 +641,7 @@ export default function ProductsPage({ tcg }: Props) {
         {commanderSets.length > 0 && (
           <section className={styles.commanderStrip}>
             <span className={styles.commanderLabel}>Commander Decks:</span>
-            {commanderSets.map(({ name, count }) => {
+            {commanderSets.map(({ name, count, avgPrice }) => {
               const isActive = productType === "Commander Deck" && setName === name;
               return (
                 <button
@@ -622,7 +659,7 @@ export default function ProductsPage({ tcg }: Props) {
                   type="button"
                   title={`${name} Commander Decks (${count})`}
                 >
-                  {name} <span className={styles.commanderCount}>{count}</span>
+                  {name} <span className={styles.commanderCount}>{count}</span><span className={styles.commanderAvgPrice}>${avgPrice}</span>
                 </button>
               );
             })}
