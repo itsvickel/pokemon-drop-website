@@ -2,7 +2,7 @@
   "framework": "nextjs",
   "regions": ["iad1"],
   "crons": [
-    { "path": "/api/check-alerts", "schedule": "0 */6 * * *" }
+    { "path": "/api/check-alerts", "schedule": "0 14 * * *" }
   ],
   "headers": [
     {
