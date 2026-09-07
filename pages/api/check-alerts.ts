@@ -10,6 +10,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getServiceSupabase } from "../../lib/supabase";
 import { loadApiResponse } from "../../lib/serverProducts";
+import { SITE_URL } from "../../lib/siteUrl";
 import { getTcgConfig, TCG_CONFIGS } from "../../lib/tcg.config";
 import { evaluateAlerts, type EvalAlert, type EvalProduct, type TriggeredAlert } from "../../lib/alertEval";
 
@@ -91,7 +92,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const now = new Date();
-  const siteBase = process.env.SITE_BASE_URL ?? "https://pokemon-drop.ca";
+  const siteBase = SITE_URL;
   let triggeredCount = 0;
   let emailFailures = 0;
 

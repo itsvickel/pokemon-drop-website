@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
+import { absoluteUrl } from "../lib/siteUrl";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer,
@@ -135,7 +136,7 @@ export default function ProductDetailPage({ tcg, groupKey }: Props) {
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={pageDescription} />
         <meta property="og:type" content="product" />
-        <link rel="canonical" href={`https://tcgdrop.ca/${tcg}/${groupKey}`} />
+        <link rel="canonical" href={absoluteUrl(`${tcg}/${groupKey}`)} />
       </Head>
 
       <GameTabBar tcg={tcg} />

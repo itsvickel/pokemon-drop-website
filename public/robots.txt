@@ -1,8 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /health
-Disallow: /account
-Disallow: /alerts
-Disallow: /unsubscribe
-
-Sitemap: https://pokemon-drop.ca/sitemap.xml

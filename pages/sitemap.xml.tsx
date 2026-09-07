@@ -1,8 +1,9 @@
 import type { GetServerSideProps } from "next";
 import { TCG_CONFIGS } from "../lib/tcg.config";
 import { loadApiResponse } from "../lib/serverProducts";
+import { SITE_URL } from "../lib/siteUrl";
 
-const SITE = process.env.SITE_BASE_URL ?? "https://pokemon-drop.ca";
+const SITE = SITE_URL;
 const ACTIVE_GAMES = ["pokemon", "mtg"] as const;
 
 function url(loc: string, changefreq: string, priority: string): string {
