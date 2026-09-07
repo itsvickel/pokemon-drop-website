@@ -25,7 +25,8 @@ const SAMPLE_SIZE = 12;
 
 type Props = {
   retailer: RetailerSummary;
-  samples: Product[];
+  /** Cheapest in-stock listings, each tagged with the game it links to. */
+  samples: (Product & { game: string })[];
   generatedAt: string;
 };
 
@@ -42,18 +43,19 @@ export const getStaticProps: GetStaticProps<Props> = async (ctx) => {
       loadApiResponseCached(TCG_CONFIGS.mtg),
       loadApiResponseCached(TCG_CONFIGS.pokemon),
     ]);
-    const all = [...mtg.products, ...pokemon.products];
-    const retailer = summariseRetailers([
+    const feeds = [
       { game: "mtg", products: mtg.products },
       { game: "pokemon", products: pokemon.products },
-    ]).find((r) => r.slug === slug);
+    ];
+    const retailer = summariseRetailers(feeds).find((r) => r.slug === slug);
 
     if (!retailer) return { notFound: true, revalidate: 3600 };
 
     return {
       props: {
         retailer,
-        samples: bestSellersFor(all, retailer.name, SAMPLE_SIZE).map(leanForSsr),
+        samples: bestSellersFor(feeds, retailer.name, SAMPLE_SIZE)
+          .map(({ product, game }) => ({ ...leanForSsr(product), game })),
         generatedAt: mtg.generated_at || "",
       },
       revalidate: 3600,
@@ -190,8 +192,13 @@ export default function RetailerPage({ retailer, samples, generatedAt }: Props) 
             </p>
             <ul className={styles.sampleList}>
               {samples.map((p) => (
-                <li key={p.group_key} className={styles.sampleRow}>
-                  <span className={styles.sampleName}>{p.name}</span>
+                <li key={`${p.game}-${p.group_key}`} className={styles.sampleRow}>
+                  <Link
+                    href={`/${p.game}/${encodeURIComponent(p.group_key)}`}
+                    className={styles.sampleName}
+                  >
+                    {p.name}
+                  </Link>
                   <span className={styles.samplePrice}>{money(p.price)}</span>
                 </li>
               ))}

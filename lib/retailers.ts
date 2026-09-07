@@ -119,16 +119,29 @@ export function summariseRetailers(feeds: { game: string; products: Product[] }[
     .sort((a, b) => b.listings - a.listings || a.name.localeCompare(b.name));
 }
 
+/** A product together with the game whose feed it came from. */
+export type GameProduct = { product: Product; game: string };
+
 /**
  * The cheapest listings a retailer currently holds the best price on.
  *
  * Only products where they win: a page of listings where the visitor would be
  * better off elsewhere is not a reason to visit the shop, and pretending
  * otherwise is how comparison sites lose trust.
+ *
+ * Takes game-tagged feeds rather than a flat list so each row can link to the
+ * right product page. The game cannot be recovered from a product on its own —
+ * both games have sealed and singles — and a link built on a guess would send
+ * half the visitors to a 404.
  */
-export function bestSellersFor(products: Product[], retailer: string, limit = 12): Product[] {
-  return products
-    .filter((p) => p.retailer === retailer && p.in_stock)
-    .sort((a, b) => a.price - b.price)
+export function bestSellersFor(
+  feeds: { game: string; products: Product[] }[],
+  retailer: string,
+  limit = 12,
+): GameProduct[] {
+  return feeds
+    .flatMap((f) => f.products.map((product) => ({ product, game: f.game })))
+    .filter(({ product }) => product.retailer === retailer && product.in_stock)
+    .sort((a, b) => a.product.price - b.product.price)
     .slice(0, limit);
 }

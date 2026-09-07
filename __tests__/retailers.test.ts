@@ -126,18 +126,32 @@ describe("summariseRetailers", () => {
 });
 
 describe("bestSellersFor", () => {
+  const keys = (rows: { product: { group_key: string } }[]) => rows.map((r) => r.product.group_key);
+
   it("returns only listings the retailer holds the best price on", () => {
-    const products = [product("a", "Shop", 10), product("b", "Other", 20)];
-    expect(bestSellersFor(products, "Shop").map((p) => p.group_key)).toEqual(["a"]);
+    const rows = bestSellersFor(feed([product("a", "Shop", 10), product("b", "Other", 20)]), "Shop");
+    expect(keys(rows)).toEqual(["a"]);
   });
 
   it("excludes sold-out listings, which are not a reason to visit", () => {
-    const products = [product("a", "Shop", 10, { inStock: false }), product("b", "Shop", 20)];
-    expect(bestSellersFor(products, "Shop").map((p) => p.group_key)).toEqual(["b"]);
+    const rows = bestSellersFor(
+      feed([product("a", "Shop", 10, { inStock: false }), product("b", "Shop", 20)]), "Shop");
+    expect(keys(rows)).toEqual(["b"]);
   });
 
   it("sorts cheapest first and respects the limit", () => {
-    const products = [product("a", "Shop", 30), product("b", "Shop", 10), product("c", "Shop", 20)];
-    expect(bestSellersFor(products, "Shop", 2).map((p) => p.group_key)).toEqual(["b", "c"]);
+    const rows = bestSellersFor(
+      feed([product("a", "Shop", 30), product("b", "Shop", 10), product("c", "Shop", 20)]), "Shop", 2);
+    expect(keys(rows)).toEqual(["b", "c"]);
+  });
+
+  it("keeps the game each product came from, so links can be built", () => {
+    // Both games have sealed and singles, so the game is not recoverable from
+    // the product alone — guessing would 404 half the links.
+    const rows = bestSellersFor([
+      { game: "mtg", products: [product("m", "Shop", 10)] },
+      { game: "pokemon", products: [product("p", "Shop", 20)] },
+    ], "Shop");
+    expect(rows.map((r) => r.game)).toEqual(["mtg", "pokemon"]);
   });
 });
