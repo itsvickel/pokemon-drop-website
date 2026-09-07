@@ -11,10 +11,29 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { getServiceSupabase } from "../../lib/supabase";
 import { loadApiResponse } from "../../lib/serverProducts";
 import { SITE_URL } from "../../lib/siteUrl";
+import { createToken } from "../../lib/authToken";
 import { getTcgConfig, TCG_CONFIGS } from "../../lib/tcg.config";
 import { evaluateAlerts, type EvalAlert, type EvalProduct, type TriggeredAlert } from "../../lib/alertEval";
 
 const COOLDOWN_HOURS = 24;
+
+/**
+ * A signed link, so the recipient can open their alerts without the endpoint
+ * having to trust an email address supplied by whoever asks.
+ */
+function manageUrl(email: string, siteBase: string): string {
+  const token = createToken(email);
+  return `${siteBase}/alerts?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`;
+}
+
+// A restock is not a price alert, and a subject line that says otherwise
+// trains people to ignore the ones that matter.
+const SUBJECTS: Record<string, string> = {
+  price: "Price alert",
+  percent: "Price drop",
+  restock: "Back in stock",
+  any_low: "Lowest price yet",
+};
 
 async function sendAlertEmail(hit: TriggeredAlert, siteBase: string): Promise<boolean> {
   const apiKey = process.env.RESEND_API_KEY;
@@ -31,13 +50,13 @@ async function sendAlertEmail(hit: TriggeredAlert, siteBase: string): Promise<bo
     body: JSON.stringify({
       from,
       to: alert.email,
-      subject: `Price alert: ${product.name.slice(0, 60)} — $${product.price.toFixed(2)} CAD`,
+      subject: `${SUBJECTS[alert.kind ?? "price"]}: ${product.name.slice(0, 60)} — ${product.price.toFixed(2)} CAD`,
       html: `
-        <p><strong>${product.name}</strong> just hit <strong>$${product.price.toFixed(2)} CAD</strong>
-        at ${product.retailer} (your target: $${alert.threshold.toFixed(2)}).</p>
+        <p><strong>${product.name}</strong> is <strong>${hit.reason}</strong>
+        at ${product.retailer}.</p>
         <p><a href="${product.url}">Buy now at ${product.retailer}</a></p>
         <p style="color:#888;font-size:12px">
-          Manage alerts: <a href="${siteBase}/alerts?email=${encodeURIComponent(alert.email)}">${siteBase}/alerts</a>
+          Manage alerts: <a href="${manageUrl(alert.email, siteBase)}">${siteBase}/alerts</a>
         </p>`,
     }),
   });
@@ -57,14 +76,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const { data: alertRows, error } = await db
     .from("user_alerts")
-    .select("id, tcg, group_key, product_name, email, threshold, active, last_triggered")
+    // kind/percent/baseline_price/was_in_stock arrive with migration 004. Postgrest
+    // errors on unknown columns, so a deployment running against an older schema
+    // falls back to the original set and every alert behaves as a price alert.
+    .select("id, tcg, group_key, product_name, email, threshold, active, last_triggered, kind, percent, baseline_price, was_in_stock")
     .eq("active", true);
 
+  // Typed loosely because the two selects return different column sets.
+  let rows: unknown[] | null = alertRows;
   if (error) {
-    return res.status(500).json({ error: `Supabase read failed: ${error.message}` });
+    // Older schema without the alert-kind columns: retry with the original set
+    // rather than failing the whole cron.
+    const legacy = await db
+      .from("user_alerts")
+      .select("id, tcg, group_key, product_name, email, threshold, active, last_triggered")
+      .eq("active", true);
+    if (legacy.error) {
+      return res.status(500).json({ error: `Supabase read failed: ${legacy.error.message}` });
+    }
+    console.warn("[check-alerts] alert-kind columns missing; run migration 004");
+    rows = legacy.data;
   }
 
-  const alerts = (alertRows ?? []) as EvalAlert[];
+  const alerts = (rows ?? []) as unknown as EvalAlert[];
   if (alerts.length === 0) {
     return res.status(200).json({ checked: 0, triggered: 0 });
   }
@@ -84,6 +118,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           retailer: p.retailer,
           url: p.url,
           in_stock: p.in_stock,
+          // Needed by the "lowest tracked price" kind, and by the history
+          // guard that stops a three-day low being emailed as a low.
+          all_time_low: p.all_time_low,
+          history_days: p.history_days,
         }]))
       );
     } catch (err) {
