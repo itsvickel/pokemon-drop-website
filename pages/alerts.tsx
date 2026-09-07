@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import type { ManageAlertsResponse } from "./api/manage-alerts";
 import styles from "../styles/Alerts.module.css";
 
-type State = "idle" | "loading" | "loaded" | "error";
+type State = "idle" | "loading" | "loaded" | "error" | "sent";
 
 async function deleteAlert(type: "price" | "restock" | "newsletter", id: string): Promise<void> {
   const endpoint = type === "newsletter" ? `/api/newsletter?id=${id}` : type === "price" ? `/api/subscribe?id=${id}` : `/api/restock?id=${id}`;
@@ -16,6 +17,7 @@ async function deleteAlert(type: "price" | "restock" | "newsletter", id: string)
 }
 
 export default function AlertsPage() {
+  const router = useRouter();
   const [email,   setEmail]   = useState("");
   const [state,   setState]   = useState<State>("idle");
   const [data,    setData]    = useState<ManageAlertsResponse | null>(null);
@@ -24,17 +26,53 @@ export default function AlertsPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editThreshold, setEditThreshold] = useState("");
 
+  // Arriving from an emailed link: load straight away.
+  useEffect(() => {
+    if (!router.isReady) return;
+    const qEmail = typeof router.query.email === "string" ? router.query.email : "";
+    const qToken = typeof router.query.token === "string" ? router.query.token : "";
+    if (!qEmail || !qToken) return;
+    setEmail(qEmail);
+    void loadWithToken(qEmail, qToken);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady]);
+
+  async function loadWithToken(addr: string, token: string) {
+    setState("loading");
+    setErrMsg("");
+    try {
+      const res = await fetch(
+        `/api/manage-alerts?email=${encodeURIComponent(addr)}&token=${encodeURIComponent(token)}`
+      );
+      const json = (await res.json()) as ManageAlertsResponse & { error?: string };
+      if (!res.ok) throw new Error(json.error ?? `Error ${res.status}`);
+      setData(json);
+      setState("loaded");
+    } catch (err) {
+      setErrMsg(err instanceof Error ? err.message : "Something went wrong");
+      setState("error");
+    }
+  }
+
+  /**
+   * Requests an emailed link rather than showing alerts for any address typed
+   * in. The old flow returned a person's full alert state to anyone who guessed
+   * their email, which made the page an enumeration tool.
+   */
   async function handleLookup(e: React.FormEvent) {
     e.preventDefault();
     if (!email.trim()) return;
     setState("loading");
     setErrMsg("");
     try {
-      const res = await fetch(`/api/manage-alerts?email=${encodeURIComponent(email.trim())}`);
-      const json = await res.json() as ManageAlertsResponse & { error?: string };
+      const res = await fetch("/api/request-alert-link", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+      const json = (await res.json()) as { error?: string };
       if (!res.ok) throw new Error(json.error ?? `Error ${res.status}`);
-      setData(json);
-      setState("loaded");
+      setState("sent");
     } catch (err) {
       setErrMsg(err instanceof Error ? err.message : "Something went wrong");
       setState("error");
@@ -115,6 +153,7 @@ export default function AlertsPage() {
           <p className={styles.subtitle}>View and remove your price alerts, restock notifications, and newsletter subscription</p>
         </header>
 
+        {state !== "loaded" && (
         <form className={styles.lookupForm} onSubmit={(e) => { void handleLookup(e); }}>
           <input
             className={styles.emailInput}
@@ -131,9 +170,16 @@ export default function AlertsPage() {
             type="submit"
             disabled={state === "loading" || !email.trim()}
           >
-            {state === "loading" ? "Looking up…" : "Look up alerts"}
+            {state === "loading" ? "Sending…" : "Email me a link"}
           </button>
         </form>
+        )}
+
+        {state === "sent" && (
+          <p className={styles.sentMsg}>
+            If that address has alerts, a link is on its way. It works for 24 hours.
+          </p>
+        )}
 
         {state === "error" && <p className={styles.errMsg}>{errMsg}</p>}
 

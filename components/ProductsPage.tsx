@@ -13,7 +13,7 @@ import styles from "../styles/Home.module.css";
 import HotStrip from "./HotStrip";
 import CompareModal, { CompareBar } from "./CompareModal";
 import { TCG_CONFIGS, type TcgSlug } from "../lib/tcg.config";
-import { LOW_LABEL, LOW_LABEL_TITLE, RETAILER_CLAIM, UPDATE_CADENCE } from "../lib/siteFacts";
+import { LOW_LABEL, LOW_LABEL_TITLE, UPDATE_CADENCE, retailerClaim } from "../lib/siteFacts";
 import { deliveredSortKey } from "../lib/shipping";
 import { itemListJsonLd, jsonLdString } from "../lib/structuredData";
 import { absoluteUrl } from "../lib/siteUrl";
@@ -414,12 +414,12 @@ export default function ProductsPage({
         <title>{`${viewTitle} — Best Canadian Prices`}</title>
         <meta
           name="description"
-          content={`Track live ${config.displayName} ${viewNoun} prices across ${RETAILER_CLAIM} Canadian retailers. Compare prices and find the best deals. Updated ${UPDATE_CADENCE}.`}
+          content={`Track live ${config.displayName} ${viewNoun} prices across ${retailerClaim(data?.retailers_count)} Canadian retailers. Compare prices and find the best deals. Updated ${UPDATE_CADENCE}.`}
         />
         <meta property="og:title" content={`${viewTitle} — Best Canadian Prices`} />
         <meta
           property="og:description"
-          content={`Live ${config.displayName} ${viewNoun} prices across ${RETAILER_CLAIM} Canadian retailers. Always find the best deal.`}
+          content={`Live ${config.displayName} ${viewNoun} prices across ${retailerClaim(data?.retailers_count)} Canadian retailers. Always find the best deal.`}
         />
         {/* Every filter combination pushes params into the URL, so without a
             self-referencing canonical each one is a separate indexable copy of
@@ -450,7 +450,7 @@ export default function ProductsPage({
           </div>
           <h1 className={styles.heroTitle}>{config.displayName}</h1>
           <p className={styles.heroTagline}>
-            Track {viewNoun} prices across {stats.retailers || RETAILER_CLAIM.replace("+", "")}+ Canadian retailers.
+            Track {viewNoun} prices across {stats.retailers || data?.retailers_count || 20}+ Canadian retailers.
             Prices updated automatically every 3 hours.
           </p>
           <div className={styles.heroStats}>

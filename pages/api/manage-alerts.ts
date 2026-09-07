@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import type { Alert } from "./subscribe";
 import type { Subscriber } from "./newsletter";
 import type { RestockAlert } from "./restock";
+import { verifyToken } from "../../lib/authToken";
 
 const REPO  = process.env.ALERT_GITHUB_REPO ?? "itsvickel/tcg-drop-alert";
 const TOKEN = process.env.ALERT_GITHUB_TOKEN ?? process.env.GITHUB_TOKEN ?? "";
@@ -26,9 +27,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!TOKEN) return res.status(500).json({ error: "ALERT_GITHUB_TOKEN not configured" });
   if (req.method !== "GET") return res.status(405).json({ error: "Method not allowed" });
 
-  const { email } = req.query;
+  const { email, token } = req.query;
   if (typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return res.status(400).json({ error: "Valid email required" });
+  }
+
+  // This endpoint returns a person's full alert and newsletter state. Without
+  // proof that the caller can receive mail at that address, anyone could
+  // enumerate who is registered and what they are tracking.
+  const check = verifyToken(email, typeof token === "string" ? token : "");
+  if (!check.valid) {
+    if (check.reason === "unconfigured") {
+      console.error("[manage-alerts] ALERT_TOKEN_SECRET is not configured");
+      return res.status(500).json({ error: "Alert access is not configured" });
+    }
+    // One reply for every failure mode, so nothing distinguishes a wrong token
+    // from an address that simply has no alerts.
+    return res.status(401).json({ error: "This link is invalid or has expired. Request a new one." });
   }
 
   try {

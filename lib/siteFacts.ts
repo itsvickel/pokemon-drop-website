@@ -15,11 +15,28 @@
  */
 
 /**
- * Deliberately conservative. Measured 2026-09-07: 14 retailers carry Magic,
- * 15 carry Pokemon, 21 unique across both. Stated as a floor so normal churn in
- * the retailer mix can never make the copy false.
+ * Static floor for copy rendered without access to the feed (the global tags in
+ * _app). Deliberately conservative: measured 2026-09-07 at 21 unique retailers
+ * across both games, and stated as a floor so churn cannot make it false.
+ *
+ * Pages that DO have the feed should call retailerClaim() instead, so the number
+ * tracks reality rather than this constant. The Shopify store registry in
+ * tcg-drop-alert carries 72 storefronts, so the live figure climbs well past
+ * this once a scan has run — but the claim must follow the data, not the
+ * intention.
  */
 export const RETAILER_CLAIM = "20+";
+
+/**
+ * Retailer count for copy, from the feed when we have it.
+ *
+ * Rounds DOWN to the nearest ten so the claim stays true as stores come and go,
+ * and never exceeds what was actually observed.
+ */
+export function retailerClaim(count?: number): string {
+  if (!count || count < 10) return RETAILER_CLAIM;
+  return `${Math.floor(count / 10) * 10}+`;
+}
 
 /**
  * The trackers in the tcg-drop-alert repo run on a twelve-hourly cron, so the
