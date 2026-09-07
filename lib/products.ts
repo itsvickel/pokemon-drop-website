@@ -6,6 +6,7 @@
  * both /api/products and /api/calendar build products from one implementation.
  */
 import type { TcgConfig } from "./tcg.config";
+import { conflictsWithGroup } from "./sizeClass";
 import { LOW_BADGE_MIN_DAYS } from "./siteFacts";
 import { changeOver, pricePerPack } from "./insights";
 import { computePackCount } from "./packCount";
@@ -483,11 +484,16 @@ export function toApiResponse(
   }
 
   const byGroup    = new Map<string, RetailerPrice[]>();
+  const namesByListing = new Map<string, string>();
   const msrpPrices = new Map<string, number>();
   for (const raw of Object.values(state.products ?? {})) {
     if (!raw.group_key || raw.price == null || raw.price < 3) continue;
+    // A group whose key says "box" must not be priced by a listing whose name
+    // says "pack". See lib/sizeClass for the $6.95 booster box this prevents.
+    if (conflictsWithGroup(raw.name ?? "", raw.group_key)) continue;
     const list = byGroup.get(raw.group_key) ?? [];
     list.push({ retailer: raw.retailer, price: raw.price, url: raw.url, in_stock: raw.in_stock, stock_qty: raw.stock_qty ?? null });
+    namesByListing.set(`${raw.group_key}|${raw.retailer}|${raw.price}`, raw.name ?? "");
     byGroup.set(raw.group_key, list);
     if (config.msrpRetailer && raw.retailer === config.msrpRetailer && raw.price > 0) {
       msrpPrices.set(raw.group_key, raw.price);
@@ -495,7 +501,8 @@ export function toApiResponse(
   }
 
   const products = Object.entries(state.best_prices)
-    .map(([group_key, bestPrice]) => {
+    .map(([group_key, storedBest]) => {
+      let bestPrice = storedBest;
       const historyItem = history[group_key];
       const entries = historyItem?.entries ?? [];
       const allTimeLow = computeAllTimeLow(entries, bestPrice.price);
@@ -504,6 +511,31 @@ export function toApiResponse(
       const isNew = entries.length > 0 && entries[0].date >= sevenDaysAgoStr;
 
       const allRetailers = byGroup.get(group_key) ?? [];
+
+      // The stored best price comes from the crawler, whose state refreshes
+      // twice a day. When it names a different unit than the group, prefer the
+      // cheapest listing that does belong — otherwise a corrected group would
+      // keep showing the wrong price until the next scan.
+      if (conflictsWithGroup(bestPrice.name ?? "", group_key)) {
+        const buyable = allRetailers.filter((r) => r.in_stock);
+        const replacement = (buyable.length ? buyable : allRetailers)
+          .reduce<RetailerPrice | null>((a, b) => (a === null || b.price < a.price ? b : a), null);
+        if (replacement) {
+          const replacementName = namesByListing.get(
+            `${group_key}|${replacement.retailer}|${replacement.price}`
+          );
+          bestPrice = {
+            ...bestPrice,
+            price: replacement.price,
+            retailer: replacement.retailer,
+            url: replacement.url,
+            // Correcting the price but keeping "Booster Pack" as the title
+            // would only move the contradiction.
+            name: replacementName || bestPrice.name,
+          };
+        }
+      }
+
       const byRetailer = new Map<string, RetailerPrice>();
       for (const r of allRetailers) {
         if (r.retailer === bestPrice.retailer) continue;
