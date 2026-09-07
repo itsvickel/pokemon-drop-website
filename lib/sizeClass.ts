@@ -19,11 +19,29 @@ const SIZE_CLASS_PRIORITY = ["case", "box", "bundle", "tin", "deck", "blister", 
 
 export type SizeClass = (typeof SIZE_CLASS_PRIORITY)[number];
 
+/**
+ * Product lines whose name says what they are without using the generic word.
+ *
+ * A Checklane Blister is the single-pack rack product sold at supermarket
+ * tills. EB Games lists it as "Chaos Rising Checklane Booster" — no size word
+ * at all — so it landed in the booster-box group and, at $8.99 against boxes of
+ * $242 and $325, dragged the group's median far enough down that the filters
+ * stopped seeing anything wrong.
+ */
+const SIZE_SYNONYMS: Record<string, SizeClass> = {
+  checklane: "blister",
+  etb: "box",          // Elite Trainer Box
+  minitin: "tin",
+};
+
 export function sizeClass(text: string | null | undefined): SizeClass | null {
   // Whole words only — "Boxer Rebellion" is not a box.
   const words = new Set((text ?? "").toLowerCase().match(/[a-z]+/g) ?? []);
   for (const cls of SIZE_CLASS_PRIORITY) {
     if (words.has(cls) || words.has(`${cls}s`) || words.has(`${cls}es`)) return cls;
+  }
+  for (const [word, cls] of Object.entries(SIZE_SYNONYMS)) {
+    if (words.has(word) || words.has(`${word}s`)) return cls;
   }
   return null;
 }

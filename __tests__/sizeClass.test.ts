@@ -69,3 +69,23 @@ describe("conflictsWithGroup", () => {
     expect(conflictsWithGroup("", BOX_GROUP)).toBe(false);
   });
 });
+
+describe("named product lines", () => {
+  it("treats a Checklane as a blister, not an unlabelled listing", () => {
+    // EB Games lists it as "Chaos Rising Checklane Booster" with no size word,
+    // so it sat inside a booster-box group at $8.99 against $242 and $325.
+    expect(sizeClass("Pokemon TCG: Mega Evolution Chaos Rising Checklane Booster")).toBe("blister");
+    expect(conflictsWithGroup(
+      "Pokemon TCG: Mega Evolution Chaos Rising Checklane Booster",
+      "booster box chaos evolution mega rising",
+    )).toBe(true);
+  });
+
+  it("treats an ETB as a box", () => {
+    expect(sizeClass("Scarlet & Violet ETB")).toBe("box");
+  });
+
+  it("still prefers an explicit size word over a synonym", () => {
+    expect(sizeClass("Checklane Booster Box")).toBe("box");
+  });
+});
