@@ -11,6 +11,32 @@ Each game splits into dedicated sections (sub-nav under the game tabs):
 - `/{tcg}/singles` — single cards with Scryfall images and CAD-vs-market pricing
 - `/{tcg}/deals` — deals-only view (7-day price drops)
 
+Two cross-game pages sit alongside them:
+
+- `/calendar?tcg=` — the release **schedule**, grouped by set, for browsing
+- `/drops?tcg=` — the upcoming-drop **feed**, for checking
+
+## Drops feed (`/drops`)
+
+Answers *when and where* a drop goes live, which the calendar cannot:
+
+- **When** — `go_live.at`, an exact instant with a live countdown. Only MTG has
+  these: Secret Lair is the sole source in either game that publishes drop times.
+  Pokémon carries retailer detection only, and the `precision` field records
+  which is which so the UI never implies accuracy it does not have.
+- **Where** — a per-retailer list with live/coming-soon/sold-out status, plus a
+  flag when a virtual waiting room fronts the drop.
+- **How sure** — a confidence percentage that always ships with the signals that
+  produced it (`components/ConfidenceBadge.tsx`), never a bare number.
+
+Sections: *going live soon*, *what just changed* (the news feed — date moved,
+pre-orders opened, sold out), *scheduled*, and *announced with no date yet*.
+
+The data is produced by `update_drops.py` in the `tcg-drop-alert` repo — see
+`DROPS.md` there for the scoring model, source list, and licensing constraints.
+`__tests__/dropsContract.test.tsx` guards the schema seam between the two repos
+using real generated output; regenerate the fixture when the Python side changes.
+
 ## Stack
 
 - Next.js 14 (pages router)

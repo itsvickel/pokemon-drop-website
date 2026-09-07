@@ -1,0 +1,478 @@
+/* Drops feed — matches the Calendar page's shell, but the card is denser
+   because a drop card carries a countdown and a retailer list, not just a date.
+   Uses the per-game --game* accent tokens from globals.css. */
+
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+}
+
+.header { margin-bottom: 32px; }
+
+.backLink {
+  color: #58a6ff;
+  text-decoration: none;
+  font-size: 0.88rem;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+.backLink:hover { text-decoration: underline; }
+
+.title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #c9d1d9;
+  margin: 0 0 6px;
+}
+
+.subtitle {
+  color: #8b949e;
+  font-size: 0.95rem;
+  margin: 0;
+  max-width: 62ch;
+  line-height: 1.5;
+}
+
+.section { margin-bottom: 40px; }
+
+.sectionTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #8b949e;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #21262d;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.count {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #8b949e;
+  background: #21262d;
+  border-radius: 20px;
+  padding: 2px 9px;
+  letter-spacing: 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  gap: 16px;
+}
+
+/* ── States ── */
+
+.loading {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  gap: 16px;
+}
+
+.skeleton {
+  height: 210px;
+  border-radius: 10px;
+  background: linear-gradient(100deg, #161b22 30%, #1c222b 50%, #161b22 70%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; }
+}
+
+.error, .empty {
+  color: #8b949e;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  padding: 20px 22px;
+  max-width: 62ch;
+}
+.error { border-left: 3px solid #f85149; }
+
+/* ── Card ── */
+
+.card {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 14px;
+  transition: border-color 0.15s;
+}
+.card:hover { border-color: var(--game, #58a6ff); }
+
+.cardLive {
+  border-color: rgba(63, 185, 80, 0.5);
+  background: linear-gradient(135deg, #161b22 0%, #131c16 100%);
+}
+
+.cardMedia { grid-row: span 1; }
+
+.thumb {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  border-radius: 6px;
+  background: #0d1117;
+  border: 1px solid #21262d;
+}
+
+.thumbPlaceholder {
+  width: 72px;
+  height: 72px;
+  border-radius: 6px;
+  background: #0d1117;
+  border: 1px solid #21262d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+}
+
+.cardBody { min-width: 0; }
+
+.cardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.cardMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  min-width: 0;
+}
+
+.series {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8b949e;
+  font-weight: 600;
+}
+
+.slTag {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-weight: 700;
+  color: #d2baff;
+  background: rgba(163, 113, 247, 0.12);
+  border: 1px solid rgba(163, 113, 247, 0.35);
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
+.name {
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: #c9d1d9;
+  margin: 0 0 6px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+.name a { color: inherit; text-decoration: none; }
+.name a:hover { color: var(--game, #58a6ff); text-decoration: underline; }
+
+.dateLine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  color: #8b949e;
+}
+
+.daysTag {
+  font-size: 0.72rem;
+  color: #d29922;
+  background: rgba(210, 153, 34, 0.1);
+  border-radius: 4px;
+  padding: 1px 6px;
+}
+
+.liveTag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #3fb950;
+  background: rgba(63, 185, 80, 0.12);
+  border: 1px solid rgba(63, 185, 80, 0.35);
+  border-radius: 4px;
+  padding: 1px 6px;
+}
+
+/* ── Go-live countdown ── */
+
+.goLive {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: 0.82rem;
+  color: #8b949e;
+}
+
+.goLiveLabel {
+  text-transform: uppercase;
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+.goLiveUpcoming { color: #c9d1d9; }
+
+.countdown {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #d29922;
+}
+
+.goLiveAbs { font-size: 0.76rem; color: #8b949e; }
+
+/* ── Retailers ── */
+
+.retailers {
+  list-style: none;
+  margin: 0 0 10px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.retailer {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.82rem;
+  min-width: 0;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #484f58;
+}
+.dot_live { background: #3fb950; }
+.dot_coming_soon { background: #d29922; }
+.dot_sold_out { background: #f85149; }
+.dot_unknown { background: #484f58; }
+
+.retailerName {
+  color: #c9d1d9;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.retailerName:hover { color: var(--game, #58a6ff); text-decoration: underline; }
+
+.retailerPrice {
+  color: #8b949e;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.78rem;
+}
+
+.queueTag {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #d29922;
+  border: 1px solid rgba(210, 153, 34, 0.4);
+  border-radius: 3px;
+  padding: 0 4px;
+}
+
+.statusTag {
+  margin-left: auto;
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.status_live { color: #3fb950; }
+.status_coming_soon { color: #d29922; }
+.status_sold_out { color: #8b949e; }
+.status_unknown { color: #8b949e; }
+
+.noRetailers {
+  font-size: 0.8rem;
+  color: #6e7681;
+  margin: 0 0 10px;
+  line-height: 1.5;
+}
+
+/* ── News links ── */
+
+.news {
+  list-style: none;
+  margin: 0 0 10px;
+  padding: 8px 0 0;
+  border-top: 1px solid #21262d;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.news li {
+  font-size: 0.78rem;
+  line-height: 1.4;
+  display: flex;
+  gap: 7px;
+  align-items: baseline;
+}
+.news a { color: #58a6ff; text-decoration: none; }
+.news a:hover { text-decoration: underline; }
+
+.newsSource {
+  color: #6e7681;
+  font-size: 0.68rem;
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+/* ── CTA ── */
+
+.cta {
+  display: inline-block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #58a6ff;
+  text-decoration: none;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 6px 12px;
+}
+.cta:hover { border-color: #58a6ff; background: rgba(88, 166, 255, 0.08); }
+
+.ctaLive {
+  color: #3fb950;
+  border-color: rgba(63, 185, 80, 0.4);
+}
+.ctaLive:hover { border-color: #3fb950; background: rgba(63, 185, 80, 0.1); }
+
+/* ── Event feed ── */
+
+.events {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: #21262d;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.event {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 10px 14px;
+  background: #161b22;
+  font-size: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.eventTag {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  border-radius: 3px;
+  padding: 2px 6px;
+  white-space: nowrap;
+  color: #8b949e;
+  background: #21262d;
+}
+.event_preorder_opened, .event_went_live { color: #3fb950; background: rgba(63, 185, 80, 0.12); }
+.event_date_moved, .event_time_changed { color: #d29922; background: rgba(210, 153, 34, 0.12); }
+.event_sold_out { color: #f85149; background: rgba(248, 81, 73, 0.12); }
+.event_announced, .event_date_set { color: #58a6ff; background: rgba(88, 166, 255, 0.12); }
+
+.eventText { color: #c9d1d9; flex: 1; min-width: 200px; }
+.eventText a { color: inherit; text-decoration: underline; text-decoration-color: #30363d; }
+.eventText a:hover { text-decoration-color: currentColor; }
+
+.eventDate {
+  color: #6e7681;
+  font-size: 0.74rem;
+  font-variant-numeric: tabular-nums;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+/* ── Credits (Bulbapedia's licence makes this a requirement, not a nicety) ── */
+
+.credits {
+  margin-top: 48px;
+  padding-top: 16px;
+  border-top: 1px solid #21262d;
+}
+
+.creditsTitle {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6e7681;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+.creditsList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  font-size: 0.78rem;
+}
+.creditsList a { color: #58a6ff; text-decoration: none; }
+.creditsList a:hover { text-decoration: underline; }
+
+.licence { color: #6e7681; margin-left: 6px; font-size: 0.72rem; }
+
+.updated {
+  color: #6e7681;
+  font-size: 0.74rem;
+  margin: 10px 0 0;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 560px) {
+  .card { grid-template-columns: 56px 1fr; gap: 12px; }
+  .thumb, .thumbPlaceholder { width: 56px; height: 56px; }
+  .grid, .loading { grid-template-columns: 1fr; }
+  .eventDate { margin-left: 0; }
+}

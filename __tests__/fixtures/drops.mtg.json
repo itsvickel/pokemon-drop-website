@@ -1,0 +1,263 @@
+{
+  "generated_at": "2026-09-07",
+  "mode": "full",
+  "attribution": [
+    {
+      "name": "Secret Lair",
+      "url": "https://secretlair.wizards.com",
+      "licence": null,
+      "source": "secretlair"
+    },
+    {
+      "name": "Scryfall",
+      "url": "https://scryfall.com",
+      "licence": null,
+      "source": "scryfall"
+    },
+    {
+      "name": "mtg.wiki",
+      "url": "https://mtg.wiki",
+      "licence": "CC BY-SA",
+      "source": "mtg.wiki"
+    }
+  ],
+  "calibration": [
+    {
+      "band": "90-100",
+      "label": "Locked",
+      "n": 0,
+      "hits": 0,
+      "accuracy": null
+    },
+    {
+      "band": "70-89",
+      "label": "Likely",
+      "n": 0,
+      "hits": 0,
+      "accuracy": null
+    },
+    {
+      "band": "45-69",
+      "label": "Soft",
+      "n": 0,
+      "hits": 0,
+      "accuracy": null
+    },
+    {
+      "band": "0-44",
+      "label": "Rumour",
+      "n": 0,
+      "hits": 0,
+      "accuracy": null
+    }
+  ],
+  "drops": [
+    {
+      "id": "mtg-secretlair-mood-swingstm-1st-edition",
+      "game": "mtg",
+      "kind": "secret_lair",
+      "name": "Mood Swings™ - 1st Edition",
+      "series": "Secret Lair",
+      "release_date": "2026-06-04",
+      "url": "https://secretlair.wizards.com/us/product/1250052/mood-swings-1st-edition",
+      "sources": [
+        "secretlair"
+      ],
+      "where": [
+        {
+          "retailer": "Secret Lair (Wizards)",
+          "status": "live",
+          "url": "https://secretlair.wizards.com/us/product/1250052/mood-swings-1st-edition",
+          "region": "US",
+          "queue": true,
+          "price": 24.99,
+          "currency": "USD",
+          "first_seen": "2026-09-07"
+        }
+      ],
+      "go_live": {
+        "at": "2026-06-01T16:00:00Z",
+        "source_tz": "Europe/Madrid",
+        "precision": "exact"
+      },
+      "image_url": "https://cdn-prod.scalefast.com/public/assets/user/10751401/image/d3340b2852b5d7cf79648a4354f1d3e9.png",
+      "first_seen": "2026-09-07",
+      "last_seen": "2026-09-07",
+      "changes": [],
+      "confidence": {
+        "score": 99,
+        "label": "Locked",
+        "signals": [
+          {
+            "label": "Source",
+            "value": "Official storefront (secretlair)",
+            "weight": 95
+          },
+          {
+            "label": "Horizon",
+            "value": "Released",
+            "weight": 0
+          },
+          {
+            "label": "Retailers",
+            "value": "Listed at 1 store",
+            "weight": 8
+          }
+        ]
+      }
+    },
+    {
+      "id": "mtg-set-reality-fracture",
+      "game": "mtg",
+      "kind": "set",
+      "name": "Reality Fracture",
+      "series": "Standard",
+      "type": "Main Set",
+      "release_date": "2026-10-02",
+      "url": "https://scryfall.com/sets/fra",
+      "sources": [
+        "mtg.wiki",
+        "retailer",
+        "scryfall"
+      ],
+      "where": [
+        {
+          "retailer": "401 Games",
+          "status": "live",
+          "url": "https://store.401games.ca/products/mtg-reality-fracture-draft-night-box",
+          "price": 124.95,
+          "currency": "CAD",
+          "image_url": "https://cdn.shopify.com/s/files/1/1704/1809/files/MTGFRA_EN_DrftNght_OtrBx_01_03.png?v=1778341415",
+          "first_seen": "2026-09-07"
+        },
+        {
+          "retailer": "Face to Face Games",
+          "status": "live",
+          "url": "https://facetofacegames.com/products/reality-fracture-play-booster-pack",
+          "price": 6.99,
+          "currency": "CAD",
+          "image_url": "https://cdn.shopify.com/s/files/1/0574/4692/4324/files/3f9e8b7978e6985612d591b703790a4e8eef5582_Asset_SEA_PAC_MTG_D59200000.jpg?v=1778275988",
+          "first_seen": "2026-09-07"
+        },
+        {
+          "retailer": "Hairy Tarantula",
+          "status": "live",
+          "url": "https://hairyt.com/products/reality-fracture-prerelease-pack",
+          "price": 49.99,
+          "currency": "CAD",
+          "image_url": "https://cdn.shopify.com/s/files/1/0266/9513/9533/files/692977.jpg?v=1777924453",
+          "first_seen": "2026-09-07"
+        }
+      ],
+      "first_seen": "2026-09-07",
+      "last_seen": "2026-09-07",
+      "changes": [],
+      "confidence": {
+        "score": 97,
+        "label": "Locked",
+        "signals": [
+          {
+            "label": "Source",
+            "value": "Publisher API (mtg.wiki, scryfall)",
+            "weight": 85
+          },
+          {
+            "label": "Horizon",
+            "value": "25 days out",
+            "weight": 0
+          },
+          {
+            "label": "Retailers",
+            "value": "Listed at 3 stores",
+            "weight": 12
+          }
+        ]
+      }
+    },
+    {
+      "id": "mtg-set-nauctis-the-sunken-realm",
+      "game": "mtg",
+      "kind": "set",
+      "name": "Nauctis: The Sunken Realm",
+      "series": "Standard",
+      "release_date": "2027-02-05",
+      "url": "https://mtg.wiki/page/Nauctis:_The_Sunken_Realm",
+      "sources": [
+        "mtg.wiki"
+      ],
+      "where": [],
+      "first_seen": "2026-09-07",
+      "last_seen": "2026-09-07",
+      "changes": [],
+      "confidence": {
+        "score": 62,
+        "label": "Soft",
+        "signals": [
+          {
+            "label": "Source",
+            "value": "Curated wiki (mtg.wiki)",
+            "weight": 65
+          },
+          {
+            "label": "Horizon",
+            "value": "151 days out",
+            "weight": -3
+          }
+        ]
+      }
+    },
+    {
+      "id": "mtg-secretlair-secret-lair-drop-series-monster-hunter-superdrop",
+      "game": "mtg",
+      "kind": "secret_lair",
+      "name": "Secret Lair Drop Series: Monster Hunter Superdrop",
+      "series": "Secret Lair",
+      "release_date": "9999-12-31",
+      "url": "https://mtg.wiki/page/Secret_Lair_Drop_Series:_Monster_Hunter_Superdrop",
+      "sources": [
+        "mtg.wiki"
+      ],
+      "where": [],
+      "first_seen": "2026-09-07",
+      "last_seen": "2026-09-07",
+      "changes": [],
+      "confidence": {
+        "score": 0,
+        "label": "No date",
+        "signals": [
+          {
+            "label": "Date",
+            "value": "Not announced yet",
+            "weight": 0
+          }
+        ]
+      }
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-09-07",
+      "type": "announced",
+      "drop_id": "mtg-set-star-trek",
+      "game": "mtg",
+      "name": "Star Trek",
+      "text": "Star Trek announced for 2026-11-13"
+    },
+    {
+      "at": "2026-09-07",
+      "type": "announced",
+      "drop_id": "mtg-set-star-trek-commander",
+      "game": "mtg",
+      "name": "Star Trek Commander",
+      "text": "Star Trek Commander announced for 2026-11-13"
+    },
+    {
+      "at": "2026-09-07",
+      "type": "announced",
+      "drop_id": "mtg-set-mystery-booster-commander-edition",
+      "game": "mtg",
+      "name": "Mystery Booster Commander Edition",
+      "text": "Mystery Booster Commander Edition announced for 2026-11-09"
+    }
+  ]
+}
