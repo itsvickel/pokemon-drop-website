@@ -68,6 +68,9 @@ export default function GameSubNav({ tcg, active, sealedCount, singlesCount }: P
         <Link href="/collection" className={styles.item}>
           📦 Collection
         </Link>
+        <Link href="/cart" className={styles.item}>
+          🧮 Best Basket
+        </Link>
       </div>
     </nav>
   );

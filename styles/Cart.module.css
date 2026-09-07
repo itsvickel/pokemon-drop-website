@@ -1,0 +1,157 @@
+/* Cart optimiser. The total is the answer, so it leads; the per-store breakdown
+   below it is the working, because a plan you cannot check is one you cannot
+   trust. */
+
+.page { max-width: 960px; margin: 0 auto; padding: 24px 16px 64px; }
+
+.header { margin-bottom: 20px; }
+.title { font-size: 1.8rem; font-weight: 700; color: #c9d1d9; margin: 0 0 6px; }
+.subtitle { color: #8b949e; font-size: 0.93rem; margin: 0; max-width: 68ch; line-height: 1.55; }
+
+.controls { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 22px; }
+.control { display: flex; flex-direction: column; gap: 4px; }
+.controlLabel {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #8b949e;
+  font-weight: 600;
+}
+.select {
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  color: #c9d1d9;
+  padding: 7px 10px;
+  font: inherit;
+  font-size: 0.88rem;
+  min-width: 190px;
+}
+.select:focus-visible { outline: 2px solid #58a6ff; outline-offset: 1px; }
+
+.state {
+  color: #8b949e;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  padding: 18px 20px;
+  max-width: 68ch;
+}
+.state a { color: #58a6ff; }
+
+/* ── Summary ── */
+
+.summary {
+  display: grid;
+  grid-template-columns: minmax(220px, auto) 1fr;
+  gap: 20px;
+  align-items: start;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-top: 3px solid #3fb950;
+  border-radius: 12px;
+  padding: 20px 22px;
+  margin-bottom: 20px;
+}
+.summaryMain { display: flex; flex-direction: column; gap: 2px; }
+.summaryLabel {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #8b949e;
+  font-weight: 600;
+}
+.summaryValue {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #3fb950;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.summarySub { font-size: 0.8rem; color: #8b949e; }
+
+.summarySide { display: flex; flex-direction: column; gap: 8px; }
+.saving { color: #3fb950; font-size: 0.88rem; margin: 0; line-height: 1.5; font-weight: 600; }
+.caveat { color: #d29922; font-size: 0.82rem; margin: 0; line-height: 1.5; }
+
+/* ── Per-store breakdown ── */
+
+.stores { display: flex; flex-direction: column; gap: 14px; }
+
+.store {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+
+.storeHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+.storeName { font-size: 1rem; font-weight: 700; color: #c9d1d9; margin: 0; }
+.storeTotal {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: #c9d1d9;
+  font-size: 1rem;
+}
+
+.storeShip { font-size: 0.8rem; color: #8b949e; margin: 0 0 12px; }
+.free { color: #3fb950; font-weight: 600; }
+.unknown { color: #d29922; }
+
+.lines { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+
+.line {
+  display: grid;
+  grid-template-columns: 32px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.thumb { width: 32px; height: 32px; object-fit: contain; border-radius: 4px; background: #0d1117; }
+.thumbBlank { width: 32px; height: 32px; border-radius: 4px; background: #0d1117; display: block; }
+
+.lineName {
+  color: #c9d1d9;
+  font-size: 0.85rem;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lineName:hover { color: var(--game, #58a6ff); text-decoration: underline; }
+
+.linePrice {
+  font-variant-numeric: tabular-nums;
+  color: #8b949e;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+/* ── Method ── */
+
+.method {
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid #21262d;
+  color: #6e7681;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  max-width: 72ch;
+}
+
+@media (max-width: 620px) {
+  .summary { grid-template-columns: 1fr; gap: 14px; }
+  .summaryValue { font-size: 1.7rem; }
+  .select { min-width: 0; width: 100%; }
+  .control { flex: 1 1 100%; }
+}
