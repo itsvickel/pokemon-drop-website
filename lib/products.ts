@@ -7,6 +7,7 @@
  */
 import type { TcgConfig } from "./tcg.config";
 import { conflictsWithGroup } from "./sizeClass";
+import { implausibleFloor } from "./priceOutliers";
 import { LOW_BADGE_MIN_DAYS } from "./siteFacts";
 import { changeOver, pricePerPack } from "./insights";
 import { computePackCount } from "./packCount";
@@ -510,13 +511,27 @@ export function toApiResponse(
 
       const isNew = entries.length > 0 && entries[0].date >= sevenDaysAgoStr;
 
-      const allRetailers = byGroup.get(group_key) ?? [];
+      const rawRetailers = byGroup.get(group_key) ?? [];
+
+      // Second pass, for the mislabelled listings a name check cannot catch:
+      // a shop titling a $6.99 pack "Booster Box" next to five real boxes at
+      // $599-$808. Only fires below a tenth of the group median, which is far
+      // outside any real sealed discount.
+      const groupPrices = [...rawRetailers.map((r) => r.price), bestPrice.price];
+      const floor = implausibleFloor(groupPrices);
+      const allRetailers = floor === null
+        ? rawRetailers
+        : rawRetailers.filter((r) => r.price >= floor);
 
       // The stored best price comes from the crawler, whose state refreshes
       // twice a day. When it names a different unit than the group, prefer the
       // cheapest listing that does belong — otherwise a corrected group would
       // keep showing the wrong price until the next scan.
-      if (conflictsWithGroup(bestPrice.name ?? "", group_key)) {
+      const bestIsBadData =
+        conflictsWithGroup(bestPrice.name ?? "", group_key) ||
+        (floor !== null && bestPrice.price < floor);
+
+      if (bestIsBadData) {
         const buyable = allRetailers.filter((r) => r.in_stock);
         const replacement = (buyable.length ? buyable : allRetailers)
           .reduce<RetailerPrice | null>((a, b) => (a === null || b.price < a.price ? b : a), null);
