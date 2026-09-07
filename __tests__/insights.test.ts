@@ -7,6 +7,7 @@ import {
 } from "../lib/insights";
 import { selectMovers, setSlug, setsWithCounts, findSetBySlug, MIN_PRICE, MAX_CREDIBLE_MOVE_PCT } from "../lib/movers";
 import type { Product, HistoryEntry } from "../lib/products";
+import { computePackCount } from "../lib/packCount";
 
 const NOW = new Date("2026-09-07T12:00:00Z");
 const daysAgo = (n: number) =>
@@ -185,5 +186,33 @@ describe("set index", () => {
     const products = [product({ set_name: "Universes Beyond: Final Fantasy" })];
     expect(findSetBySlug(products, "universes-beyond-final-fantasy")).toBe("Universes Beyond: Final Fantasy");
     expect(findSetBySlug(products, "nope")).toBeNull();
+  });
+});
+
+describe("computePackCount — year confusion", () => {
+  it("does not read a set year as a booster count", () => {
+    // "Modern Masters 2017 - Booster Pack" matched 2017 packs, which made
+    // price-per-pack come out at one cent.
+    expect(computePackCount("MTG - Modern Masters 2017 - Booster Pack")).not.toBe(2017);
+    expect(computePackCount("Magic: The Gathering Jumpstart 2020 - Booster Box")).toBe(36);
+    expect(computePackCount("MTG - Core Set 2019 - Booster Box - Japanese")).toBe(36);
+  });
+
+  it("still reads a genuine explicit count", () => {
+    expect(computePackCount("Pokemon Booster Bundle 6 Packs")).toBe(6);
+    expect(computePackCount("Scarlet & Violet 12 Boosters")).toBe(12);
+  });
+
+  it("still falls back to known product shapes", () => {
+    expect(computePackCount("Bloomburrow Booster Box")).toBe(36);
+    expect(computePackCount("Surging Sparks Elite Trainer Box")).toBe(9);
+  });
+
+  it("returns null when there is nothing to go on", () => {
+    expect(computePackCount("Secret Lair Drop Series: Rad Superdrop")).toBeNull();
+  });
+
+  it("rejects an implausibly large count", () => {
+    expect(computePackCount("Bulk lot 5000 boosters")).toBeNull();
   });
 });
