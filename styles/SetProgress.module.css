@@ -1,0 +1,80 @@
+/* Progress bars earn their space by being scannable: the bar carries the
+   comparison, the numbers confirm it. */
+
+.wrap { margin: 28px 0 0; }
+
+.heading {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #c9d1d9;
+  margin: 0 0 12px;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.row {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  padding: 12px 14px;
+  min-width: 0;
+}
+
+.top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+
+.name {
+  color: #c9d1d9;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.name:hover { color: var(--game, #58a6ff); text-decoration: underline; }
+
+.count {
+  color: #8b949e;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.slash { color: #484f58; margin: 0 1px; }
+.asterisk { color: #d29922; margin-left: 2px; }
+
+.bar {
+  height: 6px;
+  background: #0d1117;
+  border-radius: 3px;
+  overflow: hidden;
+  margin: 9px 0 7px;
+}
+.fill {
+  display: block;
+  height: 100%;
+  background: var(--game, #58a6ff);
+  border-radius: 3px;
+}
+
+.bottom { display: flex; justify-content: space-between; align-items: baseline; }
+.percent { color: #c9d1d9; font-size: 0.8rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.value { color: #6e7681; font-size: 0.76rem; font-variant-numeric: tabular-nums; }
+
+.footnote {
+  color: #8b949e;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  margin: 12px 0 0;
+  max-width: 62ch;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .fill { transition: width 260ms ease; }
+}

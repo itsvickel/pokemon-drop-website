@@ -82,12 +82,28 @@ export type CardEnrichment = {
   approximate: boolean;
 };
 
+/** How large a set is, for measuring collection completion against. */
+export type SetInfo = {
+  name: string;
+  /**
+   * The numbered run a collector completes — Scryfall's printed_size where it
+   * exists, card_count otherwise. Deliberately not card_count everywhere: that
+   * counts promos and alternate arts that were never part of the set.
+   */
+  total: number;
+  released_at: string;
+  set_type: string;
+  digital: boolean;
+};
+
 export type SinglesEnrichmentJson = {
   generated_at: string;
   fx_rate: number;
   matched: number;
   unmatched: number;
   cards: Record<string, CardEnrichment>;
+  /** Keyed by lowercase set code. Absent when Scryfall was unreachable. */
+  sets?: Record<string, SetInfo>;
 };
 
 // ── Enriched output shapes ────────────────────────────────────────────────────
@@ -151,6 +167,12 @@ export type ApiResponse = {
    * say how many are on the other tab.
    */
   counts?: { sealed: number; singles: number };
+  /**
+   * Set sizes, keyed by lowercase set code, for collection completion. Absent
+   * when the enrichment run could not reach Scryfall — the collection page
+   * falls back to counting only what we track.
+   */
+  sets?: Record<string, SetInfo>;
 };
 
 // ── Numeric helpers ───────────────────────────────────────────────────────────
@@ -542,7 +564,8 @@ export function toApiResponse(
   return {
     products,
     generated_at: new Date().toISOString(),
-    retailers_count: new Set(products.map((product) => product.retailer)).size
+    retailers_count: new Set(products.map((product) => product.retailer)).size,
+    sets: enrichment?.sets,
   };
 }
 

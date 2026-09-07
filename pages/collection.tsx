@@ -2,6 +2,8 @@ import Head from "next/head";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import useSWR from "swr";
+import SetProgressPanel from "../components/SetProgress";
+import { setProgress } from "../lib/setCompletion";
 import GameTabBar from "../components/GameTabBar";
 import Footer from "../components/Footer";
 import { useAuth } from "../hooks/useAuth";
@@ -9,7 +11,7 @@ import { useCollection } from "../hooks/useCollection";
 import { coverageNote, portfolioTotals, valueCollection } from "../lib/collection";
 import { sizedImage, thumbSrcSet, THUMB } from "../lib/images";
 import { downloadCsv, toCsv } from "../lib/csv";
-import type { Product } from "../lib/products";
+import type { ApiResponse, Product } from "../lib/products";
 import styles from "../styles/Collection.module.css";
 
 /**
@@ -21,7 +23,6 @@ import styles from "../styles/Collection.module.css";
  * of the feed should not look like a crash.
  */
 
-type ApiResponse = { products: Product[] };
 const fetcher = (url: string) => fetch(url).then((r) => r.json()) as Promise<ApiResponse>;
 
 const money = (n: number) => `$${n.toFixed(2)}`;
@@ -45,6 +46,13 @@ export default function CollectionPage() {
     [collection.holdings, products]
   );
   const totals = useMemo(() => portfolioTotals(valued), [valued]);
+
+  // Set sizes come from the singles enrichment, which only runs for Magic.
+  // Pokemon holdings simply produce no rows rather than wrong ones.
+  const progress = useMemo(
+    () => setProgress(valued, mtg.data?.sets, products),
+    [valued, mtg.data?.sets, products]
+  );
   const note = coverageNote(totals);
 
   async function handleSignIn(e: React.FormEvent) {
@@ -157,6 +165,8 @@ export default function CollectionPage() {
                 </button>
               </div>
             )}
+
+            <SetProgressPanel rows={progress} />
 
             {note && <p className={styles.coverage}>{note}</p>}
             {collection.error && <p className={styles.error} role="alert">{collection.error}</p>}
