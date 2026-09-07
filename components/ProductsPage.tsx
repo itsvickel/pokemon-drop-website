@@ -22,7 +22,7 @@ import { useCollection } from "../hooks/useCollection";
 
 // The canonical response shape lives in lib/products; a local copy is how
 // the Product type drifted before.
-import type { ApiResponse } from "../lib/products";
+import { buyableFirst, type ApiResponse } from "../lib/products";
 
 type SortOption = "price_asc" | "delivered" | "price_desc" | "drop" | "atl_pct" | "deal" | "updated" | "name";
 const VALID_SORTS: SortOption[] = ["price_asc", "delivered", "price_desc", "drop", "atl_pct", "deal", "updated", "name"];
@@ -370,15 +370,20 @@ export default function ProductsPage({
     if (minP !== null && !isNaN(minP)) next = next.filter((p) => p.price >= minP);
     if (maxP !== null && !isNaN(maxP)) next = next.filter((p) => p.price <= maxP);
 
+    // Price- and deal-ranked sorts put buyable listings first. A sold-out
+    // product keeps its last known price so history and restock alerts work,
+    // which means "cheapest" would otherwise be led by things nobody can buy.
+    // "Updated", "name" and the change-based sorts are left alone: there, a
+    // sold-out product is either the news itself or irrelevant to the order.
     switch (sort) {
-      case "delivered":  next.sort(byDeliveredPrice); break;
-      case "price_desc": next.sort((a, b) => b.price - a.price); break;
+      case "delivered":  next.sort(buyableFirst(byDeliveredPrice)); break;
+      case "price_desc": next.sort(buyableFirst((a, b) => b.price - a.price)); break;
       case "drop":       next.sort(byLargestDrop); break;
       case "atl_pct":    next.sort(byAllTimeLowPct); break;
-      case "deal":       next.sort(byDealScore); break;
+      case "deal":       next.sort(buyableFirst(byDealScore)); break;
       case "updated":    next.sort(byUpdatedDesc); break;
       case "name":       next.sort((a, b) => a.name.localeCompare(b.name)); break;
-      default:           next.sort((a, b) => a.price - b.price);
+      default:           next.sort(buyableFirst((a, b) => a.price - b.price));
     }
 
     return next;

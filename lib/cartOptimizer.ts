@@ -104,7 +104,20 @@ export type CartPlan = {
   rankScore: number;
 };
 
-/** All offers for one product, cheapest first, in-stock preferred. */
+/**
+ * Buyable offers for one product, cheapest first.
+ *
+ * Sold-out offers are dropped rather than ranked last. This page exists to
+ * produce a shopping plan, and an order you cannot place is not a cheaper
+ * plan — it is a wrong one. The crawler now keeps recording a listing after it
+ * sells out, holding the last known price so restock alerts work, and that
+ * price is frequently the lowest the product has ever shown. Left in, it would
+ * win on price precisely because nobody can buy it.
+ *
+ * A product whose every listing is sold out therefore yields no offers, and
+ * falls into the plan's missing list — which already tells the visitor the item
+ * is not stocked by any retailer we track right now.
+ */
 export function offersFor(product: Product | undefined): Offer[] {
   if (!product) return [];
   const rows: Offer[] = [
@@ -115,8 +128,8 @@ export function offersFor(product: Product | undefined): Offer[] {
   ];
   // Foreign-currency retailers cannot be compared against CAD prices.
   return rows
-    .filter((o) => o.price > 0 && !SHIPPING_POLICIES[o.retailer]?.foreign)
-    .sort((a, b) => (a.inStock === b.inStock ? a.price - b.price : a.inStock ? -1 : 1));
+    .filter((o) => o.inStock && o.price > 0 && !SHIPPING_POLICIES[o.retailer]?.foreign)
+    .sort((a, b) => a.price - b.price);
 }
 
 function combinations<T>(pool: T[], size: number): T[][] {

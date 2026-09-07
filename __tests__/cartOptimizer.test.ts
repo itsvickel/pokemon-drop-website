@@ -1,14 +1,20 @@
 import { optimizeCart, offersFor, MAX_STORES, type WantedItem } from "../lib/cartOptimizer";
 import type { Product } from "../lib/products";
 
-function product(key: string, retailer: string, price: number, others: Array<[string, number]> = []): Product {
+function product(
+  key: string,
+  retailer: string,
+  price: number,
+  others: Array<[string, number] | [string, number, boolean]> = [],
+  inStock = true,
+): Product {
   return {
     group_key: key, name: key, price, retailer, url: `https://x/${key}`,
     is_preorder: false, updated: "", all_time_low: price, price_change_7d: null,
     history: [], history_days: 0, price_change_1d: null, price_change_30d: null,
     pack_count: null, price_per_pack: null, image_url: "",
-    other_retailers: others.map(([r, p]) => ({ retailer: r, price: p, url: `https://x/${key}/${r}`, in_stock: true, stock_qty: null })),
-    is_new: false, in_stock: true, back_in_stock: false, language: "English",
+    other_retailers: others.map(([r, p, st]) => ({ retailer: r, price: p, url: `https://x/${key}/${r}`, in_stock: st ?? true, stock_qty: null })),
+    is_new: false, in_stock: inStock, back_in_stock: false, language: "English",
     product_type: "Booster Box", set_name: "S", variant: "", category: "sealed",
     msrp: null, deal_score: 50, last_restock_date: null,
   };
@@ -151,5 +157,41 @@ describe("optimizeCart", () => {
     const result = optimizeCart([], [product("a", "A&C Games", 10)]);
     expect(result.best).toBeNull();
     expect(result.consideredRetailers).toBe(0);
+  });
+});
+
+describe("sold-out offers", () => {
+  it("ignores a sold-out listing even when it is the cheapest", () => {
+    // The crawler holds a listing's last known price after it sells out, and
+    // that price is often the lowest the product ever showed.
+    const offers = offersFor(product("a", "401 Games", 100, [["A&C Games", 10, false]]));
+    expect(offers.map((o) => o.retailer)).toEqual(["401 Games"]);
+  });
+
+  it("yields no offers when every listing is sold out", () => {
+    const offers = offersFor(product("a", "401 Games", 100, [["A&C Games", 80, false]], false));
+    expect(offers).toEqual([]);
+  });
+
+  it("reports a sold-out-everywhere item as missing rather than planning it", () => {
+    const result = optimizeCart(
+      [want("dead"), want("alive")],
+      [product("dead", "401 Games", 10, [], false), product("alive", "401 Games", 50)],
+      {},
+    );
+    expect(result.best).not.toBeNull();
+    expect(result.best!.complete).toBe(false);
+    expect(result.best!.missing.map((m) => m.group_key)).toEqual(["dead"]);
+    expect(result.best!.lines.map((l) => l.item.group_key)).toEqual(["alive"]);
+  });
+
+  it("routes an item to a pricier retailer that actually has it", () => {
+    const result = optimizeCart(
+      [want("a")],
+      [product("a", "401 Games", 10, [["A&C Games", 40]], false)],
+      {},
+    );
+    expect(result.best!.lines[0].retailer).toBe("A&C Games");
+    expect(result.best!.lines[0].unitPrice).toBe(40);
   });
 });

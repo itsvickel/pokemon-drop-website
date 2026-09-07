@@ -576,3 +576,40 @@ export function leanForSsr(product: Product): Product {
   // Drops undefined values, which getStaticProps rejects outright.
   return JSON.parse(JSON.stringify(lean)) as Product;
 }
+
+/**
+ * True when no retailer has this product in stock.
+ *
+ * Matters more than it used to: the crawler now keeps recording a group after
+ * every listing sells out, holding the last known price so the page can say
+ * "last seen at $X" instead of the product vanishing. That is the right
+ * behaviour for history and restock alerts, but it means a price on screen is
+ * no longer proof you can buy it — so anything that ranks by price has to know
+ * the difference.
+ */
+export function isSoldOutEverywhere(p: {
+  in_stock: boolean;
+  other_retailers: { in_stock: boolean }[];
+}): boolean {
+  return !p.in_stock && !p.other_retailers.some((r) => r.in_stock);
+}
+
+/**
+ * Orders buyable products ahead of sold-out ones, leaving each side to the
+ * comparator it wraps.
+ *
+ * Applied to the price and deal sorts, where an unbuyable listing would
+ * otherwise take the top slot precisely because nobody could buy it at that
+ * price. Not applied to "recently updated", where a sold-out product changing
+ * state is exactly the news the sort exists to surface.
+ */
+export function buyableFirst<T extends Parameters<typeof isSoldOutEverywhere>[0]>(
+  compare: (a: T, b: T) => number,
+): (a: T, b: T) => number {
+  return (a, b) => {
+    const aOut = isSoldOutEverywhere(a);
+    const bOut = isSoldOutEverywhere(b);
+    if (aOut !== bOut) return aOut ? 1 : -1;
+    return compare(a, b);
+  };
+}
