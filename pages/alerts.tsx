@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { ALERT_CHECK_CADENCE } from "../lib/siteFacts";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -150,7 +151,11 @@ export default function AlertsPage() {
         <header className={styles.header}>
           <Link href="/" className={styles.backLink}>← Back to tracker</Link>
           <h1 className={styles.title}>Manage Alerts</h1>
-          <p className={styles.subtitle}>View and remove your price alerts, restock notifications, and newsletter subscription</p>
+          <p className={styles.subtitle}>
+            View and remove your price alerts, restock notifications, and
+            newsletter subscription. Prices and stock are checked{" "}
+            {ALERT_CHECK_CADENCE}.
+          </p>
         </header>
 
         {state !== "loaded" && (

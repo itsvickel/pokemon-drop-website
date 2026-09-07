@@ -16,9 +16,9 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   const entries: string[] = [];
 
   for (const tcg of ACTIVE_GAMES) {
-    entries.push(url(`${SITE}/${tcg}/sealed`, "hourly", "1.0"));
+    entries.push(url(`${SITE}/${tcg}/sealed`, "daily", "1.0"));
     entries.push(url(`${SITE}/${tcg}/singles`, "daily", "0.8"));
-    entries.push(url(`${SITE}/${tcg}/deals`, "hourly", "0.9"));
+    entries.push(url(`${SITE}/${tcg}/deals`, "daily", "0.9"));
   }
   for (const tcg of ACTIVE_GAMES) {
     entries.push(url(`${SITE}/movers?tcg=${tcg}`, "daily", "0.8"));

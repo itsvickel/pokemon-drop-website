@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { ALERT_CHECK_CADENCE, ALERT_MAX_DELAY, LOW_LABEL_TITLE } from "../lib/siteFacts";
 import type { Product } from "./ProductCard";
 import { getSavedEmail, saveEmail } from "../lib/savedEmail";
 import styles from "../styles/AlertModal.module.css";
@@ -112,7 +113,7 @@ export default function AlertModal({ product, onClose, tcg = "pokemon" }: Props)
               <span className={styles.hint}>
                 Current best price: <strong>${product.price.toFixed(2)}</strong>
                 {product.all_time_low < product.price && (
-                  <> · All-time low: <strong>${product.all_time_low.toFixed(2)}</strong></>
+                  <> · {LOW_LABEL_TITLE}: <strong>${product.all_time_low.toFixed(2)}</strong></>
                 )}
               </span>
             </label>
@@ -130,7 +131,9 @@ export default function AlertModal({ product, onClose, tcg = "pokemon" }: Props)
             </button>
 
             <p className={styles.disclaimer}>
-              You can unsubscribe at any time via the link in the email.
+              Prices are checked {ALERT_CHECK_CADENCE}, so an alert can arrive{" "}
+              {ALERT_MAX_DELAY} after the price drops. You can unsubscribe at any
+              time via the link in the email.
             </p>
           </form>
         )}

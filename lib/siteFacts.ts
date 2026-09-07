@@ -65,3 +65,20 @@ export const HIGH_LABEL_TITLE = `${PRICE_WINDOW_DAYS}-Day High`;
  * their low would otherwise be a six-day low wearing a 90-day label.
  */
 export const LOW_BADGE_MIN_DAYS = 14;
+
+/**
+ * How often alerts are evaluated.
+ *
+ * Vercel's Hobby plan permits one cron run a day, and the alert check is the
+ * one job that has to be a cron. So a restock alert can be up to a day late —
+ * which for a hot product is the difference between a heads-up and a
+ * consolation note.
+ *
+ * Stated wherever someone sets an alert. "Notify me when it is back in stock"
+ * on its own promises a promptness the schedule cannot deliver, and a person
+ * who finds that out by missing a restock will not set another alert.
+ */
+export const ALERT_CHECK_CADENCE = "once a day";
+
+/** Longest an alert can lag the event that triggered it. */
+export const ALERT_MAX_DELAY = "up to 24 hours";

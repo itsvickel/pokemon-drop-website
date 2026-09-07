@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { LOW_LABEL_TITLE } from "../lib/siteFacts";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer
@@ -67,7 +68,7 @@ export default function PriceHistoryModal({ name, history, onClose }: Props) {
         </div>
 
         <div className={styles.statsRow}>
-          <span>All-time low: <strong>${allTimeLow.toFixed(2)}</strong></span>
+          <span>{LOW_LABEL_TITLE}: <strong>${allTimeLow.toFixed(2)}</strong></span>
           <span>All-time high: <strong>${allTimeHigh.toFixed(2)}</strong></span>
           <span>Data points: <strong>{sorted.length}</strong></span>
         </div>

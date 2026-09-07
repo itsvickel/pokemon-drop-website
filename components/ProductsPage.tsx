@@ -710,7 +710,7 @@ export default function ProductsPage({
                 checked={lowOnly}
                 onChange={(e) => setLowOnly(e.target.checked)}
               />
-              All-time low only
+              {LOW_LABEL_TITLE} only
             </label>
             <label className={styles.toggle}>
               <input

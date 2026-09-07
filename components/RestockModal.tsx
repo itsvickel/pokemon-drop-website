@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { ALERT_CHECK_CADENCE, ALERT_MAX_DELAY } from "../lib/siteFacts";
 import type { Product } from "./ProductCard";
 import { getSavedEmail, saveEmail } from "../lib/savedEmail";
 import styles from "../styles/RestockModal.module.css";
@@ -64,11 +65,16 @@ export default function RestockModal({ product, onClose, tcg = "pokemon" }: Prop
         <h2 className={styles.title}>Restock alert</h2>
         <p className={styles.productName}>{product.name}</p>
         <p className={styles.subtitle}>This product is currently out of stock.</p>
+        <p className={styles.cadence}>
+          We check stock {ALERT_CHECK_CADENCE}, so an alert can arrive{" "}
+          {ALERT_MAX_DELAY} after a restock.
+        </p>
 
         {state === "success" ? (
           <div className={styles.successBox}>
             <p className={styles.successMsg}>
-              ✓ You&apos;re on the list! We&apos;ll email you when <strong>{product.name}</strong> is back in stock.
+              ✓ You&apos;re on the list. We&apos;ll email you after the next stock check
+              finds <strong>{product.name}</strong> available again.
             </p>
             <button className={styles.doneBtn} onClick={onClose} type="button">Done</button>
           </div>
