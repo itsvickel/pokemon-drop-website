@@ -194,3 +194,82 @@ export function roiSinceFirstSeen(
     likelyOutOfPrint: sinceRelease !== null && sinceRelease >= OUT_OF_PRINT_DAYS,
   };
 }
+
+// ── Percentile and fake-discount detection ────────────────────────────────────
+
+/**
+ * Where today's price sits in the observed range, as a percentile.
+ *
+ * "Cheaper than 91% of the last 90 days" is a far stronger claim than a badge,
+ * and it costs nothing extra — the series is already loaded. Returns null when
+ * the history is too short to support the sentence, because a percentile over
+ * four observations is arithmetic pretending to be evidence.
+ */
+export function pricePercentile(
+  price: number,
+  entries: HistoryEntry[] | undefined
+): number | null {
+  if (!entries || entries.length < 10) return null;
+  if (historySpanDays(entries) < LOW_BADGE_MIN_DAYS) return null;
+
+  const prices = entries.map((e) => e.price).filter((p) => p > 0);
+  if (prices.length < 10) return null;
+
+  const cheaperThan = prices.filter((p) => p > price).length;
+  return Math.round((cheaperThan / prices.length) * 100);
+}
+
+export type DiscountCheck = {
+  /** True when a "sale" is not actually a reduction from the recent norm. */
+  suspicious: boolean;
+  /** Days the price has sat at or above the current level. */
+  daysAtPrice: number;
+  message: string | null;
+};
+
+/** A price must be unchanged this long before we call a "sale" into question. */
+export const STALE_SALE_DAYS = 21;
+
+/**
+ * Is this "discount" real?
+ *
+ * Retailers inflate reference prices routinely. We hold the actual series, so
+ * we can say when a price has simply been sitting where it is. This is the same
+ * instinct as siteFacts — pointed outward instead of inward — and it is the
+ * behaviour CamelCamelCamel built its reputation on.
+ *
+ * Conservative by construction: it only speaks up when the price has been flat
+ * for weeks, and never accuses a retailer of anything, it just states how long
+ * the price has held.
+ */
+export function discountCheck(
+  price: number,
+  entries: HistoryEntry[] | undefined,
+  now: Date = new Date()
+): DiscountCheck {
+  const quiet: DiscountCheck = { suspicious: false, daysAtPrice: 0, message: null };
+  if (!entries || entries.length < 6) return quiet;
+
+  const dated = entries
+    .map((e) => ({ t: parseDate(e.date).getTime(), price: e.price }))
+    .filter((e) => e.t > 0 && e.price > 0)
+    .sort((a, b) => b.t - a.t);
+  if (dated.length < 6) return quiet;
+
+  // Walk back while the price stays within a rounding cent of today's.
+  const tolerance = Math.max(0.01, price * 0.005);
+  let oldestSame = dated[0].t;
+  for (const point of dated) {
+    if (Math.abs(point.price - price) > tolerance) break;
+    oldestSame = point.t;
+  }
+
+  const days = Math.round((now.getTime() - oldestSame) / 86_400_000);
+  if (days < STALE_SALE_DAYS) return { suspicious: false, daysAtPrice: days, message: null };
+
+  return {
+    suspicious: true,
+    daysAtPrice: days,
+    message: `This price hasn't changed in ${days} days — any "sale" badge is not a recent reduction.`,
+  };
+}

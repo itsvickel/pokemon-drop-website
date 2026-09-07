@@ -19,6 +19,8 @@
  * threshold anywhere on their own store-policies page.
  */
 
+import { provinceRate, withTax } from "./tax";
+
 export type ShippingCurrency = "CAD" | "USD" | "GBP";
 
 export type ShippingPolicy = {
@@ -170,7 +172,29 @@ export function deliveredPrice(price: number, retailer: string): DeliveredEstima
  * Sort key for "cheapest delivered". Items whose delivered cost is unknown fall
  * back to their listed price rather than being pushed to the end — an unknown
  * shipping cost is not evidence of a bad deal.
+ *
+ * Applies provincial sales tax when a province is selected. Tax ranges from 5%
+ * in Alberta to 15% in the Atlantic provinces, which is a wider spread than most
+ * price differences, so the cheapest listing genuinely differs by where you
+ * live. With no province selected the ordering is unchanged.
  */
-export function deliveredSortKey(price: number, retailer: string): number {
-  return deliveredPrice(price, retailer).total ?? price;
+export function deliveredSortKey(
+  price: number,
+  retailer: string,
+  provinceCode?: string | null
+): number {
+  const base = deliveredPrice(price, retailer).total ?? price;
+  return withTax(base, provinceCode);
+}
+
+/** Landed cost: item, delivery where known, and provincial tax. */
+export function landedPrice(
+  price: number,
+  retailer: string,
+  provinceCode?: string | null
+): DeliveredEstimate & { taxed: boolean } {
+  const est = deliveredPrice(price, retailer);
+  const rate = provinceRate(provinceCode);
+  if (rate === null || est.total === null) return { ...est, taxed: false };
+  return { ...est, total: withTax(est.total, provinceCode), taxed: true };
 }
