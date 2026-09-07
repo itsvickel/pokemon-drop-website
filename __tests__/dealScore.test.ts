@@ -1,4 +1,5 @@
 import { computeDealSignals } from "../components/DealScoreBreakdown";
+import { LOW_LABEL } from "../lib/siteFacts";
 
 const base = {
   price: 50,
@@ -9,26 +10,26 @@ const base = {
   msrp: null as number | null,
 };
 
-describe("computeDealSignals — ATL signal", () => {
-  test("reports at-all-time-low when price equals all_time_low", () => {
+describe("computeDealSignals — price-vs-low signal", () => {
+  test("reports at-the-low when price equals the tracked low", () => {
     const s = computeDealSignals({ ...base, price: 40, all_time_low: 40 });
     const atl = s.find((x) => x.label === "Price");
-    expect(atl?.value).toBe("At all-time low");
+    expect(atl?.value).toBe(`At ${LOW_LABEL}`);
     expect(atl?.positive).toBe(true);
   });
 
-  test("reports % above ATL when price is higher", () => {
+  test("reports % above the low when price is higher", () => {
     const s = computeDealSignals({ ...base, price: 50, all_time_low: 40 });
     const atl = s.find((x) => x.label === "Price");
-    expect(atl?.value).toBe("+25% above ATL");
+    expect(atl?.value).toBe(`+25% above ${LOW_LABEL}`);
   });
 
-  test("marks as positive when <10% above ATL", () => {
+  test("marks as positive when <10% above the low", () => {
     const s = computeDealSignals({ ...base, price: 43, all_time_low: 40 });
     expect(s.find((x) => x.label === "Price")?.positive).toBe(true);
   });
 
-  test("marks as negative when >=10% above ATL", () => {
+  test("marks as negative when >=10% above the low", () => {
     const s = computeDealSignals({ ...base, price: 50, all_time_low: 40 });
     expect(s.find((x) => x.label === "Price")?.positive).toBe(false);
   });

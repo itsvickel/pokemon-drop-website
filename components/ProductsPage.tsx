@@ -13,6 +13,8 @@ import styles from "../styles/Home.module.css";
 import HotStrip from "./HotStrip";
 import CompareModal, { CompareBar } from "./CompareModal";
 import { TCG_CONFIGS, type TcgSlug } from "../lib/tcg.config";
+import { LOW_LABEL, LOW_LABEL_TITLE, RETAILER_CLAIM, UPDATE_CADENCE } from "../lib/siteFacts";
+import { deliveredSortKey } from "../lib/shipping";
 
 type ApiResponse = {
   products: Product[];
@@ -20,8 +22,8 @@ type ApiResponse = {
   retailers_count: number;
 };
 
-type SortOption = "price_asc" | "price_desc" | "drop" | "atl_pct" | "deal" | "updated" | "name";
-const VALID_SORTS: SortOption[] = ["price_asc", "price_desc", "drop", "atl_pct", "deal", "updated", "name"];
+type SortOption = "price_asc" | "delivered" | "price_desc" | "drop" | "atl_pct" | "deal" | "updated" | "name";
+const VALID_SORTS: SortOption[] = ["price_asc", "delivered", "price_desc", "drop", "atl_pct", "deal", "updated", "name"];
 
 const REFRESH_MS = 5 * 60 * 1000;
 const PAGE_SIZE  = 48;
@@ -46,6 +48,14 @@ function byAllTimeLowPct(a: Product, b: Product): number {
   const aPct = a.all_time_low > 0 ? (a.price - a.all_time_low) / a.all_time_low : 0;
   const bPct = b.all_time_low > 0 ? (b.price - b.all_time_low) / b.all_time_low : 0;
   return aPct - bPct;
+}
+
+// The listed price is not the price paid: a cheaper item from a retailer with a
+// high free-shipping threshold can cost more delivered than a dearer one that
+// ships free. Where the delivered cost is unknown we fall back to the listed
+// price rather than penalising the retailer for not publishing a policy.
+function byDeliveredPrice(a: Product, b: Product): number {
+  return deliveredSortKey(a.price, a.retailer) - deliveredSortKey(b.price, b.retailer);
 }
 
 function byDealScore(a: Product, b: Product): number {
@@ -294,6 +304,7 @@ export default function ProductsPage({ tcg, view = "sealed" }: Props) {
     if (maxP !== null && !isNaN(maxP)) next = next.filter((p) => p.price <= maxP);
 
     switch (sort) {
+      case "delivered":  next.sort(byDeliveredPrice); break;
       case "price_desc": next.sort((a, b) => b.price - a.price); break;
       case "drop":       next.sort(byLargestDrop); break;
       case "atl_pct":    next.sort(byAllTimeLowPct); break;
@@ -358,12 +369,12 @@ export default function ProductsPage({ tcg, view = "sealed" }: Props) {
         <title>{`${viewTitle} — Best Canadian Prices`}</title>
         <meta
           name="description"
-          content={`Track live ${config.displayName} ${viewNoun} prices across 50+ Canadian retailers. Compare prices and find the best deals. Updated every 3 hours.`}
+          content={`Track live ${config.displayName} ${viewNoun} prices across ${RETAILER_CLAIM} Canadian retailers. Compare prices and find the best deals. Updated ${UPDATE_CADENCE}.`}
         />
         <meta property="og:title" content={`${viewTitle} — Best Canadian Prices`} />
         <meta
           property="og:description"
-          content={`Live ${config.displayName} ${viewNoun} prices across 50+ Canadian retailers. Always find the best deal.`}
+          content={`Live ${config.displayName} ${viewNoun} prices across ${RETAILER_CLAIM} Canadian retailers. Always find the best deal.`}
         />
       </Head>
 
@@ -399,7 +410,7 @@ export default function ProductsPage({ tcg, view = "sealed" }: Props) {
             </div>
             <div className={`${styles.heroStat} ${styles.heroStatGreen}`}>
               <strong>{stats.allTimeLow}</strong>
-              <span>At all-time low</span>
+              <span>At {LOW_LABEL}</span>
             </div>
             <div className={styles.heroStat}>
               <strong>{stats.retailers || data?.retailers_count}</strong>
@@ -456,7 +467,7 @@ export default function ProductsPage({ tcg, view = "sealed" }: Props) {
             <strong>{stats.deals}</strong>
           </div>
           <div className={`${styles.statCard} ${styles.statCardGreen}`}>
-            <span className={styles.statLabel}>All-Time Low</span>
+            <span className={styles.statLabel}>{LOW_LABEL_TITLE}</span>
             <strong>{stats.allTimeLow}</strong>
           </div>
           <div className={`${styles.statCard} ${styles.statCardBlue}`}>
@@ -494,10 +505,11 @@ export default function ProductsPage({ tcg, view = "sealed" }: Props) {
               aria-label="Sort order"
             >
               <option value="price_asc">Price ↑ Low to High</option>
+              <option value="delivered">Cheapest Delivered</option>
               <option value="price_desc">Price ↓ High to Low</option>
               <option value="drop">Biggest 7-Day Drop</option>
               <option value="deal">Best Deal Score</option>
-              <option value="atl_pct">Closest to All-Time Low</option>
+              <option value="atl_pct">Closest to {LOW_LABEL_TITLE}</option>
               <option value="updated">Recently Updated</option>
               <option value="name">Name A–Z</option>
             </select>

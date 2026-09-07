@@ -16,6 +16,7 @@ function makeProduct(overrides: Partial<Product>): Product {
     all_time_low: 90,
     price_change_7d: null,
     history: [],
+    history_days: 0,
     image_url: "",
     other_retailers: [],
     is_new: false,

@@ -1,5 +1,6 @@
 import type { AppProps } from "next/app";
 import Head from "next/head";
+import { RETAILER_CLAIM, UPDATE_CADENCE } from "../lib/siteFacts";
 import "../styles/globals.css";
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -11,14 +12,14 @@ export default function App({ Component, pageProps }: AppProps) {
         <title>TCG Drop — Best Canadian Prices</title>
         <meta
           name="description"
-          content="Track live TCG sealed product prices across 50+ Canadian retailers. Compare Pokémon TCG and Magic: The Gathering prices. Updated every 3 hours."
+          content={`Track live TCG sealed product prices across ${RETAILER_CLAIM} Canadian retailers. Compare Pokémon TCG and Magic: The Gathering prices. Updated ${UPDATE_CADENCE}.`}
         />
         <meta name="robots" content="index, follow" />
         <meta property="og:type"        content="website" />
         <meta property="og:title"       content="TCG Drop — Best Canadian Prices" />
         <meta
           property="og:description"
-          content="Live TCG sealed product prices across 50+ Canadian retailers. Always find the best deal."
+          content={`Live TCG sealed product prices across ${RETAILER_CLAIM} Canadian retailers. Always find the best deal.`}
         />
         <meta name="theme-color" content="#0d1117" />
         <meta name="color-scheme" content="dark" />

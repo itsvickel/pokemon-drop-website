@@ -7,6 +7,7 @@ import type { CalendarResponse, CalendarSet, CalendarProduct } from "./api/calen
 import { TBA_DATE } from "../lib/calendar";
 import { TCG_CONFIGS, type TcgSlug } from "../lib/tcg.config";
 import styles from "../styles/Calendar.module.css";
+import { sizedImage, THUMB } from "../lib/images";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json()) as Promise<CalendarResponse>;
 
@@ -51,7 +52,7 @@ function ProductRow({ product, setDate, tcg, cta }: { product: CalendarProduct; 
         {product.image_url ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={product.image_url}
+            src={sizedImage(product.image_url, THUMB)}
             alt={product.name}
             className={styles.thumbImg}
             loading="lazy"

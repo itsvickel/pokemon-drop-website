@@ -22,6 +22,7 @@ import {
 } from "../lib/drops";
 import { TCG_CONFIGS, type TcgSlug } from "../lib/tcg.config";
 import styles from "../styles/Drops.module.css";
+import { sizedImage, THUMB } from "../lib/images";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json()) as Promise<DropsResponse>;
 
@@ -109,7 +110,7 @@ function DropCard({ drop, now, accuracyNote }: { drop: Drop; now: Date; accuracy
         {drop.image_url ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={drop.image_url}
+            src={sizedImage(drop.image_url, THUMB)}
             alt=""
             className={styles.thumb}
             loading="lazy"

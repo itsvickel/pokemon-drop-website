@@ -3,10 +3,13 @@ import Link from "next/link";
 import Sparkline from "./Sparkline";
 import ProductDetailModal from "./ProductDetailModal";
 import styles from "../styles/Card.module.css";
+import { LOW_LABEL, LOW_LABEL_TITLE } from "../lib/siteFacts";
+import { hasReliableLow } from "../lib/products";
 import DealScoreBreakdown from "./DealScoreBreakdown";
 import { SHIPPING_THRESHOLDS } from "../lib/shipping";
 import { computePackCount } from "../lib/packCount";
 import type { CardEnrichment } from "../lib/products";
+import { sizedImage, thumbSrcSet, THUMB } from "../lib/images";
 
 type HistoryEntry = {
   date: string;
@@ -121,7 +124,10 @@ export default function ProductCard({
 }: ProductCardProps) {
   const [showDetail, setShowDetail] = useState(false);
 
-  const isAllTimeLow   = product.price <= product.all_time_low + 0.0001;
+  // A "low" only earns a badge once we have watched the product long enough
+  // for it to mean something — see hasReliableLow.
+  const isAllTimeLow   = product.price <= product.all_time_low + 0.0001
+    && hasReliableLow(product);
   const cleanUrl       = stripTrackingParams(product.url);
   const packCount      = computePackCount(product.name);
   const weeklyChange   = product.price_change_7d;
@@ -156,7 +162,8 @@ export default function ProductCard({
           {product.image_url ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={product.image_url}
+              src={sizedImage(product.image_url, THUMB)}
+              srcSet={thumbSrcSet(product.image_url)}
               alt={product.name}
               className={styles.productImage}
               loading="lazy"
@@ -185,7 +192,7 @@ export default function ProductCard({
           <div className={styles.badges}>
             {product.is_new        && <span className={`${styles.badge} ${styles.badgeNew}`}>NEW</span>}
             {product.back_in_stock && <span className={`${styles.badge} ${styles.badgeBackInStock}`}>BACK IN STOCK</span>}
-            {isAllTimeLow          && <span className={`${styles.badge} ${styles.badgeAllTimeLow}`}>ALL-TIME LOW</span>}
+            {isAllTimeLow          && <span className={`${styles.badge} ${styles.badgeAllTimeLow}`}>{LOW_LABEL.toUpperCase()}</span>}
             {product.is_preorder   && <span className={`${styles.badge} ${styles.badgePreorder}`}>PRE-ORDER</span>}
             {hasWeeklyChange && weeklyChange! < 0 && (
               <span className={`${styles.badge} ${styles.badgeDrop}`}>
@@ -261,7 +268,7 @@ export default function ProductCard({
 
         {!isAllTimeLow && (
           <p className={styles.lowNote}>
-            {`All-time low: $${product.all_time_low.toFixed(2)} CAD`}
+            {`${LOW_LABEL_TITLE}: $${product.all_time_low.toFixed(2)} CAD`}
           </p>
         )}
 

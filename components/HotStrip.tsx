@@ -1,5 +1,6 @@
 import type { Product } from "./ProductCard";
 import styles from "../styles/HotStrip.module.css";
+import { sizedImage, thumbSrcSet, THUMB } from "../lib/images";
 
 type Props = {
   products: Product[];
@@ -42,7 +43,7 @@ export default function HotStrip({ products, onSelect }: Props) {
           >
             {p.image_url ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={p.image_url} alt="" className={styles.thumb} loading="lazy" />
+              <img src={sizedImage(p.image_url, THUMB)} srcSet={thumbSrcSet(p.image_url)} alt="" className={styles.thumb} loading="lazy" />
             ) : (
               <div className={styles.thumbPlaceholder} />
             )}

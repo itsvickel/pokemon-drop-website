@@ -5,6 +5,8 @@ import { stripTrackingParams } from "./ProductCard";
 import { SHIPPING_THRESHOLDS } from "../lib/shipping";
 import type { Product } from "./ProductCard";
 import styles from "../styles/CompareModal.module.css";
+import { LOW_LABEL } from "../lib/siteFacts";
+import { sizedImage, thumbSrcSet, THUMB } from "../lib/images";
 
 type ModalProps = {
   products: Product[];
@@ -65,7 +67,7 @@ export default function CompareModal({ products, onClose, onRemove }: ModalProps
               <div key={p.group_key} className={styles.col}>
                 {p.image_url && (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={p.image_url} alt={p.name} className={styles.image} />
+                  <img src={sizedImage(p.image_url, THUMB)} srcSet={thumbSrcSet(p.image_url)} alt={p.name} className={styles.image} />
                 )}
                 <h3 className={styles.name}>{p.name}</h3>
 
@@ -77,14 +79,14 @@ export default function CompareModal({ products, onClose, onRemove }: ModalProps
                     </span>
                   </div>
                   <div className={styles.dataRow}>
-                    <span className={styles.dataLabel}>vs ATL</span>
+                    <span className={styles.dataLabel}>vs {LOW_LABEL}</span>
                     <span
                       className={`${styles.dataValue} ${
                         isAtl ? styles.green : styles.orange
                       }`}
                     >
                       {isAtl
-                        ? "AT ATL"
+                        ? `AT ${LOW_LABEL.toUpperCase()}`
                         : atlPct !== null
                         ? `+${atlPct.toFixed(0)}%`
                         : "—"}
@@ -223,7 +225,7 @@ export function CompareBar({ products, onRemove, onCompare, onClear }: BarProps)
             {p.image_url ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={p.image_url}
+                src={sizedImage(p.image_url, THUMB)}
                 alt={p.name}
                 className={styles.compareBarThumb}
               />

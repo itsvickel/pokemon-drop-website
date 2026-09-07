@@ -4,6 +4,7 @@ import type { DigestResponse } from "./api/digest";
 import type { TcgSlug } from "../lib/tcg.config";
 import { TCG_CONFIGS } from "../lib/tcg.config";
 import styles from "../styles/Digest.module.css";
+import { sizedImage, THUMB } from "../lib/images";
 
 type Props = { digest: DigestResponse | null; tcg: TcgSlug };
 
@@ -74,7 +75,7 @@ export default function DigestPage({ digest, tcg }: Props) {
               {deal.image_url ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
-                  src={deal.image_url}
+                  src={sizedImage(deal.image_url, THUMB)}
                   alt=""
                   className={styles.thumb}
                   loading="lazy"

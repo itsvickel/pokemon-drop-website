@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Product } from "./ProductCard";
 import styles from "../styles/DealScoreBreakdown.module.css";
+import { LOW_LABEL } from "../lib/siteFacts";
 
 export type DealSignal = {
   label: string;
@@ -21,11 +22,11 @@ export function computeDealSignals(product: {
   if (product.all_time_low > 0) {
     const pctAbove = ((product.price - product.all_time_low) / product.all_time_low) * 100;
     if (pctAbove <= 0.01) {
-      signals.push({ label: "Price", value: "At all-time low", positive: true });
+      signals.push({ label: "Price", value: `At ${LOW_LABEL}`, positive: true });
     } else {
       signals.push({
         label: "Price",
-        value: `+${pctAbove.toFixed(0)}% above ATL`,
+        value: `+${pctAbove.toFixed(0)}% above ${LOW_LABEL}`,
         positive: pctAbove < 10,
       });
     }

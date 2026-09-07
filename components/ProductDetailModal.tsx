@@ -7,10 +7,12 @@ import {
   Tooltip, ResponsiveContainer
 } from "recharts";
 import type { Product } from "./ProductCard";
+import { HIGH_LABEL_TITLE, LOW_LABEL_TITLE } from "../lib/siteFacts";
 import styles from "../styles/ProductDetail.module.css";
 import DealScoreBreakdown from "./DealScoreBreakdown";
 import { SHIPPING_THRESHOLDS } from "../lib/shipping";
 import { computePackCount } from "../lib/packCount";
+import { sizedImage, DETAIL } from "../lib/images";
 
 
 function stripTracking(url: string): string {
@@ -123,7 +125,7 @@ export default function ProductDetailModal({ product, onClose, autoOpenAlert, tc
             {product.image_url && (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={product.image_url}
+                src={sizedImage(product.image_url, DETAIL)}
                 alt={product.name}
                 className={styles.headerImage}
                 style={{ cursor: "zoom-in" }}
@@ -161,11 +163,11 @@ export default function ProductDetailModal({ product, onClose, autoOpenAlert, tc
           {/* Quick stats */}
           <div className={styles.statsRow}>
             <div className={styles.stat}>
-              <span className={styles.statLabel}>All-Time Low</span>
+              <span className={styles.statLabel}>{LOW_LABEL_TITLE}</span>
               <strong className={styles.statValue}>${allTimeLow.toFixed(2)}</strong>
             </div>
             <div className={styles.stat}>
-              <span className={styles.statLabel}>All-Time High</span>
+              <span className={styles.statLabel}>{HIGH_LABEL_TITLE}</span>
               <strong className={styles.statValue}>${allTimeHigh.toFixed(2)}</strong>
             </div>
             {product.msrp && (

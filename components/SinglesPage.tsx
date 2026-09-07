@@ -11,6 +11,7 @@ import GameSubNav from "./GameSubNav";
 import { useWishlist } from "../hooks/useWishlist";
 import { TCG_CONFIGS, type TcgSlug } from "../lib/tcg.config";
 import styles from "../styles/Singles.module.css";
+import { sizedImage, THUMB } from "../lib/images";
 
 type ApiResponse = {
   products: Product[];
@@ -318,7 +319,7 @@ export default function SinglesPage({ tcg }: Props) {
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
                           className={styles.art}
-                          src={p.card?.image_url || p.image_url}
+                          src={sizedImage(p.card?.image_url || p.image_url, THUMB)}
                           alt=""
                           loading="lazy"
                           style={{ cursor: "zoom-in" }}

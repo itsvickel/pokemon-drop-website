@@ -6,6 +6,7 @@
  * both /api/products and /api/calendar build products from one implementation.
  */
 import type { TcgConfig } from "./tcg.config";
+import { LOW_BADGE_MIN_DAYS } from "./siteFacts";
 
 // ── Raw scraper shapes ────────────────────────────────────────────────────────
 
@@ -108,6 +109,12 @@ export type Product = {
   all_time_low: number;
   price_change_7d: number | null;
   history: HistoryEntry[];
+  /**
+   * Days spanned by the FULL history, even when `history` has been trimmed for
+   * the list payload. Without it, a trimmed feed would make every product look
+   * newly tracked and silently suppress the low badge.
+   */
+  history_days: number;
   image_url: string;
   other_retailers: RetailerPrice[];
   is_new: boolean;
@@ -146,6 +153,58 @@ export function computeAllTimeLow(entries: HistoryEntry[], currentPrice: number)
     return currentPrice;
   }
   return Math.min(currentPrice, ...entries.map((entry) => entry.price));
+}
+
+/** Days between the first and last price we have recorded for a product. */
+export function historySpanDays(entries: HistoryEntry[] | undefined): number {
+  if (!entries || entries.length < 2) return 0;
+  let min = Infinity;
+  let max = -Infinity;
+  for (const entry of entries) {
+    const t = parseDate(entry.date).getTime();
+    if (t <= 0) continue;
+    if (t < min) min = t;
+    if (t > max) max = t;
+  }
+  if (!Number.isFinite(min) || !Number.isFinite(max)) return 0;
+  return Math.round((max - min) / 86_400_000);
+}
+
+/**
+ * Whether we have watched a product long enough for its lowest price to mean
+ * anything. Under LOW_BADGE_MIN_DAYS the "low" describes when we started
+ * tracking rather than the market, so the badge is suppressed rather than
+ * presented as a buying signal.
+ *
+ * Accepts either a product or a bare history array. Given a product it prefers
+ * the precomputed `history_days`, because the list payload ships only a trimmed
+ * slice of history — measuring that slice would understate the real span.
+ */
+export function hasReliableLow(
+  input: { history_days?: number; history?: HistoryEntry[] } | HistoryEntry[] | undefined
+): boolean {
+  if (!input) return false;
+  if (Array.isArray(input)) return historySpanDays(input) >= LOW_BADGE_MIN_DAYS;
+  const days = input.history_days ?? historySpanDays(input.history);
+  return days >= LOW_BADGE_MIN_DAYS;
+}
+
+/**
+ * Points kept per product in the list payload. The grid draws a ~40px
+ * sparkline, so the tail is all it can render; the full series is served by
+ * /api/product/[group_key] for the detail view.
+ */
+export const LIST_HISTORY_POINTS = 30;
+
+/**
+ * Trim a product for the list payload. History was 59% of a 6.8 MB response
+ * (69,751 points, median 11 each), downloaded and parsed every five minutes to
+ * draw a sparkline that cannot show most of it.
+ */
+export function slimProduct(product: Product): Product {
+  const history = product.history ?? [];
+  if (history.length <= LIST_HISTORY_POINTS) return product;
+  return { ...product, history: history.slice(-LIST_HISTORY_POINTS) };
 }
 
 export function computeDealScore(
@@ -405,6 +464,7 @@ export function toApiResponse(
         all_time_low: allTimeLow,
         price_change_7d: sevenDayChange,
         history: entries,
+        history_days: historySpanDays(entries),
         image_url: bestPrice.image_url ?? "",
         other_retailers: otherRetailers,
         is_new: isNew,

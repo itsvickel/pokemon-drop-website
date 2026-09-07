@@ -13,9 +13,12 @@ import ImageLightbox from "./ImageLightbox";
 import DealScoreBreakdown from "./DealScoreBreakdown";
 import type { Product } from "./ProductCard";
 import type { TcgSlug } from "../lib/tcg.config";
-import { SHIPPING_THRESHOLDS } from "../lib/shipping";
+import { SHIPPING_THRESHOLDS, deliveredPrice } from "../lib/shipping";
+import { HIGH_LABEL_TITLE, LOW_LABEL, LOW_LABEL_TITLE } from "../lib/siteFacts";
+import { hasReliableLow } from "../lib/products";
 import { computePackCount } from "../lib/packCount";
 import styles from "../styles/ProductDetailPage.module.css";
+import { sizedImage, DETAIL } from "../lib/images";
 
 type TooltipPayload = {
   active?: boolean;
@@ -81,14 +84,19 @@ export default function ProductDetailPage({ tcg, groupKey }: Props) {
   useEffect(() => {
     setLoading(true);
     setError("");
-    fetch(`/api/products?tcg=${tcg}`)
-      .then(r => r.json())
+    // One product with its full history, rather than the entire 2,645-item
+    // catalogue filtered down to a single record on the client.
+    fetch(`/api/product/${encodeURIComponent(groupKey)}?tcg=${tcg}`)
+      .then(async r => {
+        const data = await r.json();
+        if (!r.ok) throw new Error(data?.error ?? "Product not found");
+        return data as { product: Product };
+      })
       .then(data => {
-        const found: Product | undefined = data.products?.find((p: Product) => p.group_key === groupKey);
-        if (found) setProduct(found);
+        if (data.product) setProduct(data.product);
         else setError("Product not found — it may have been delisted.");
       })
-      .catch(() => setError("Failed to load product data."))
+      .catch((err: Error) => setError(err.message || "Failed to load product data."))
       .finally(() => setLoading(false));
   }, [tcg, groupKey]);
 
@@ -178,7 +186,7 @@ export default function ProductDetailPage({ tcg, groupKey }: Props) {
                 <div className={styles.heroImage}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={product.image_url}
+                    src={sizedImage(product.image_url, DETAIL)}
                     alt={product.name}
                     className={styles.heroImg}
                     style={{ cursor: "zoom-in" }}
@@ -191,7 +199,8 @@ export default function ProductDetailPage({ tcg, groupKey }: Props) {
                 <div className={styles.heroBadges}>
                   {product.is_new && <span className={styles.badgeNew}>NEW</span>}
                   {product.back_in_stock && <span className={styles.badgeBis}>BACK IN STOCK</span>}
-                  {product.price <= product.all_time_low + 0.0001 && <span className={styles.badgeAtl}>ALL-TIME LOW</span>}
+                  {product.price <= product.all_time_low + 0.0001 && hasReliableLow(product)
+                    && <span className={styles.badgeAtl}>{LOW_LABEL.toUpperCase()}</span>}
                   {product.is_preorder && <span className={styles.badgePre}>PRE-ORDER</span>}
                   {product.language !== "English" && <span className={styles.badgeLang}>{product.language}</span>}
                   {product.variant && <span className={styles.badgeVariant}>{product.variant}</span>}
@@ -246,11 +255,11 @@ export default function ProductDetailPage({ tcg, groupKey }: Props) {
             {/* Stats strip */}
             <div className={styles.statsStrip}>
               <div className={styles.statItem}>
-                <span className={styles.statLabel}>All-Time Low</span>
+                <span className={styles.statLabel}>{LOW_LABEL_TITLE}</span>
                 <strong className={styles.statValue}>${allTimeLow.toFixed(2)}</strong>
               </div>
               <div className={styles.statItem}>
-                <span className={styles.statLabel}>All-Time High</span>
+                <span className={styles.statLabel}>{HIGH_LABEL_TITLE}</span>
                 <strong className={styles.statValue}>${allTimeHigh.toFixed(2)}</strong>
               </div>
               {product.msrp && (
@@ -293,7 +302,16 @@ export default function ProductDetailPage({ tcg, groupKey }: Props) {
                       <span className={`${styles.stockDot} ${r.in_stock ? styles.inStock : styles.outOfStock}`} />
                       <div>
                         <span className={styles.retailerName}>{r.retailer}</span>
-                        <span className={styles.shippingHint}>{SHIPPING_THRESHOLDS[r.retailer] ?? "Check site"}</span>
+                        <span className={styles.shippingHint}>
+                          {(() => {
+                            const d = deliveredPrice(r.price, r.retailer);
+                            return d.shipsFree
+                              ? "Ships free"
+                              : d.total !== null
+                                ? `$${d.total.toFixed(2)} delivered`
+                                : d.label;
+                          })()}
+                        </span>
                       </div>
                     </div>
                     <div className={styles.retailerRight}>
