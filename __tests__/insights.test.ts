@@ -4,6 +4,8 @@ import {
   priceVerdict,
   roiSinceFirstSeen,
   OUT_OF_PRINT_DAYS,
+  retailerSpread,
+  MIN_NOTEWORTHY_SPREAD_PCT,
 } from "../lib/insights";
 import { selectMovers, setSlug, setsWithCounts, findSetBySlug, MIN_PRICE, MAX_CREDIBLE_MOVE_PCT } from "../lib/movers";
 import type { Product, HistoryEntry } from "../lib/products";
@@ -240,5 +242,45 @@ describe("selectMovers — direction split", () => {
     ]);
     m.risers.forEach((p) => expect(p.price_change_7d!).toBeGreaterThan(0));
     m.fallers.forEach((p) => expect(p.price_change_7d!).toBeLessThan(0));
+  });
+});
+
+describe("retailerSpread", () => {
+  it("needs at least two retailers to compare", () => {
+    expect(retailerSpread([100])).toBeNull();
+    expect(retailerSpread([])).toBeNull();
+  });
+
+  it("reports how far the cheapest sits below the median", () => {
+    const s = retailerSpread([80, 100, 120])!;
+    expect(s.median).toBe(100);
+    expect(s.cheapest).toBe(80);
+    expect(s.savingPct).toBeCloseTo(20);
+    expect(s.noteworthy).toBe(true);
+  });
+
+  it("averages the middle two on an even count", () => {
+    expect(retailerSpread([90, 100, 110, 120])!.median).toBe(105);
+  });
+
+  it("stays quiet when everyone charges about the same", () => {
+    // Being 2% cheaper is not worth saying out loud.
+    expect(retailerSpread([98, 100, 102])!.noteworthy).toBe(false);
+  });
+
+  it("refuses to call an implausible gap a saving", () => {
+    // A 90% spread almost always means two different products were grouped,
+    // not a genuine bargain — the same guard the movers list uses.
+    const s = retailerSpread([10, 100, 120])!;
+    expect(s.savingPct).toBeGreaterThan(MIN_NOTEWORTHY_SPREAD_PCT);
+    expect(s.noteworthy).toBe(false);
+  });
+
+  it("ignores non-positive prices rather than skewing the median", () => {
+    expect(retailerSpread([0, 100, 120])!.retailerCount).toBe(2);
+  });
+
+  it("never claims a saving when the cheapest IS the median", () => {
+    expect(retailerSpread([100, 100])!.savingPct).toBeCloseTo(0);
   });
 });

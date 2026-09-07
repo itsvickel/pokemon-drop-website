@@ -61,3 +61,11 @@
   padding: 1px 5px;
   cursor: help;
 }
+
+/* Cross-retailer saving. Distinct from the percentile, which compares against
+   time rather than against other shops. */
+.spread {
+  font-size: 0.7rem;
+  color: #58a6ff;
+  cursor: help;
+}

@@ -8,6 +8,19 @@ export interface TcgConfig {
   /** Folder name inside the tcg-drop-alert repo (e.g. "pokemon" → pokemon/state.json) */
   githubDataPath: string;
   /** Canonical retailer used as MSRP reference. Empty string = no MSRP calculation. */
+  /**
+   * Retailer treated as the MSRP reference.
+   *
+   * INERT: neither configured retailer ("Pokemon Center CA", "Card Kingdom (US)")
+   * appears in the scraped data, so msrp is null on all 4,391 products and the
+   * "% off MSRP" signal has never rendered. computeDealScore already
+   * redistributes MSRP's weight when it is absent, so scoring is unaffected.
+   *
+   * The comparison people actually want — how this price compares to what other
+   * Canadian shops charge today — is retailerSpread() in lib/insights, which
+   * uses data we have. Left here rather than deleted so that pointing it at a
+   * real retailer remains a one-line change.
+   */
   msrpRetailer: string;
   /** Known set names, sorted longest-first for greedy prefix matching. */
   knownSets: string[];

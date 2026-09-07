@@ -167,7 +167,13 @@ export default function ProductCard({
             {product.is_new        && <span className={`${styles.badge} ${styles.badgeNew}`}>NEW</span>}
             {product.back_in_stock && <span className={`${styles.badge} ${styles.badgeBackInStock}`}>BACK IN STOCK</span>}
             {isAllTimeLow          && <span className={`${styles.badge} ${styles.badgeAllTimeLow}`}>{LOW_LABEL.toUpperCase()}</span>}
-            <PriceVerdict price={product.price} history={product.history} retailer={product.retailer} compact />
+            <PriceVerdict
+              price={product.price}
+              history={product.history}
+              retailer={product.retailer}
+              otherPrices={(product.other_retailers ?? []).map((r) => r.price)}
+              compact
+            />
             {product.is_preorder   && <span className={`${styles.badge} ${styles.badgePreorder}`}>PRE-ORDER</span>}
             {hasWeeklyChange && weeklyChange! < 0 && (
               <span className={`${styles.badge} ${styles.badgeDrop}`}>

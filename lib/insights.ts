@@ -273,3 +273,59 @@ export function discountCheck(
     message: `This price hasn't changed in ${days} days — any "sale" badge is not a recent reduction.`,
   };
 }
+
+// ── Cross-retailer comparison ─────────────────────────────────────────────────
+
+/**
+ * Above this, the "saving" is almost certainly two different products grouped
+ * together rather than a real price difference. Same guard the movers list uses.
+ */
+export const MAX_CREDIBLE_SPREAD_PCT = 60;
+/** Below this, being cheapest is not worth saying out loud. */
+export const MIN_NOTEWORTHY_SPREAD_PCT = 10;
+
+export type RetailerSpread = {
+  retailerCount: number;
+  cheapest: number;
+  median: number;
+  dearest: number;
+  /** Percent below the median retailer. Negative when dearer than typical. */
+  savingPct: number;
+  /** True when the gap is big enough, and credible enough, to show. */
+  noteworthy: boolean;
+};
+
+/**
+ * How this price compares to what other retailers charge right now.
+ *
+ * This is the honest replacement for the "% off MSRP" signal, which has never
+ * once rendered: the reference retailers configured in tcg.config never appear
+ * in the scraped data, so msrp is null on all 4,391 products. A manufacturer
+ * price nobody actually charges is also a weaker comparison than what five real
+ * Canadian shops are asking today.
+ *
+ * Foreign-currency retailers are excluded by the caller, since a USD figure
+ * beside CAD ones would understate every comparison.
+ */
+export function retailerSpread(prices: number[]): RetailerSpread | null {
+  const valid = prices.filter((p) => p > 0).sort((a, b) => a - b);
+  if (valid.length < 2) return null;
+
+  const cheapest = valid[0];
+  const dearest = valid[valid.length - 1];
+  const mid = Math.floor(valid.length / 2);
+  const median = valid.length % 2 === 0 ? (valid[mid - 1] + valid[mid]) / 2 : valid[mid];
+  if (median <= 0) return null;
+
+  const savingPct = ((median - cheapest) / median) * 100;
+  const credible = ((dearest - cheapest) / dearest) * 100 <= MAX_CREDIBLE_SPREAD_PCT;
+
+  return {
+    retailerCount: valid.length,
+    cheapest,
+    median,
+    dearest,
+    savingPct: Math.round(savingPct * 10) / 10,
+    noteworthy: credible && savingPct >= MIN_NOTEWORTHY_SPREAD_PCT,
+  };
+}
