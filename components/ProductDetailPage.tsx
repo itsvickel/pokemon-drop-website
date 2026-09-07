@@ -19,6 +19,7 @@ import { hasReliableLow } from "../lib/products";
 import { computePackCount } from "../lib/packCount";
 import styles from "../styles/ProductDetailPage.module.css";
 import { sizedImage, DETAIL } from "../lib/images";
+import { changeOver, roiSinceFirstSeen } from "../lib/insights";
 
 type TooltipPayload = {
   active?: boolean;
@@ -119,6 +120,10 @@ export default function ProductDetailPage({ tcg, groupKey }: Props) {
   const allTimeLow  = prices.length ? Math.min(...prices) : product?.all_time_low ?? 0;
   const allTimeHigh = prices.length ? Math.max(...prices) : product?.price ?? 0;
   const packCount = product ? computePackCount(product.name) : null;
+  // Change windows and return-since-tracking, shown beside the price history.
+  const change1d = product ? changeOver(product.history, product.price, 1) : null;
+  const change30d = product ? changeOver(product.history, product.price, 30) : null;
+  const roi = product ? roiSinceFirstSeen(product.price, product.history) : null;
 
   const allRetailers = product
     ? [
@@ -262,6 +267,24 @@ export default function ProductDetailPage({ tcg, groupKey }: Props) {
                 <span className={styles.statLabel}>{HIGH_LABEL_TITLE}</span>
                 <strong className={styles.statValue}>${allTimeHigh.toFixed(2)}</strong>
               </div>
+              {product.price_per_pack !== null && product.pack_count !== null && (
+                <div className={styles.statItem}>
+                  <span className={styles.statLabel}>Per Pack</span>
+                  <strong className={styles.statValue}>
+                    ${product.price_per_pack.toFixed(2)}
+                  </strong>
+                  <span className={styles.statLabel}>{product.pack_count} packs</span>
+                </div>
+              )}
+              {roi && (
+                <div className={styles.statItem}>
+                  <span className={styles.statLabel}>Since First Tracked</span>
+                  <strong className={styles.statValue}>
+                    {roi.pct > 0 ? "+" : ""}{roi.pct.toFixed(1)}%
+                  </strong>
+                  <span className={styles.statLabel}>over {roi.days} days</span>
+                </div>
+              )}
               {product.msrp && (
                 <div className={styles.statItem}>
                   <span className={styles.statLabel}>MSRP</span>

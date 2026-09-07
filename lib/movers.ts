@@ -42,9 +42,15 @@ export function selectMovers(
   const eligible = (products ?? []).filter((p) => credible(p, field));
   const by = (a: Product, b: Product) => (a[field] ?? 0) - (b[field] ?? 0);
 
+  // Split by direction BEFORE taking the top N. Sorting one pool two ways puts
+  // the same product in both columns whenever fewer than `limit` items
+  // qualify — so a product that rose would appear under "biggest drops".
+  const fell = eligible.filter((p) => (p[field] ?? 0) < 0);
+  const rose = eligible.filter((p) => (p[field] ?? 0) > 0);
+
   return {
-    fallers: [...eligible].sort(by).slice(0, limit),
-    risers: [...eligible].sort((a, b) => by(b, a)).slice(0, limit),
+    fallers: fell.sort(by).slice(0, limit),
+    risers: rose.sort((a, b) => by(b, a)).slice(0, limit),
   };
 }
 

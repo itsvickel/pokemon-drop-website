@@ -1,0 +1,1667 @@
+{
+  "products": [
+    {
+      "group_key": "countdown foil halo hymn kit lair secret to tourach",
+      "name": "Hymn to Tourach (Halo Foil) [Secret Lair Countdown Kit]",
+      "price": 15,
+      "retailer": "House of Cards",
+      "url": "https://houseofcards.ca/products/hymn-to-tourach-halo-foil-secret-lair-countdown-kit",
+      "is_preorder": false,
+      "updated": "2026-09-07T05:23:03.524185",
+      "all_time_low": 15,
+      "price_change_7d": -6.25,
+      "history": [
+        {
+          "date": "2026-06-09",
+          "price": 17,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-06-10",
+          "price": 17,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-06-11",
+          "price": 17,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-06-12",
+          "price": 17,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-06-13",
+          "price": 17,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-06-14",
+          "price": 17,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-06-15",
+          "price": 17,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-06-16",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-06-17",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-07-01",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-07-02",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-07-03",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-07-04",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-27",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-28",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-01",
+          "price": 15,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-02",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-03",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-04",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-05",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-06",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-07",
+          "price": 15,
+          "retailer": "House of Cards"
+        }
+      ],
+      "history_days": 90,
+      "price_change_1d": -6.25,
+      "price_change_30d": null,
+      "pack_count": null,
+      "price_per_pack": null,
+      "image_url": "https://cdn.shopify.com/s/files/1/0567/4178/9882/files/662022.jpg?v=1766519965",
+      "other_retailers": [],
+      "is_new": false,
+      "in_stock": true,
+      "back_in_stock": false,
+      "language": "English",
+      "product_type": "Secret Lair",
+      "set_name": "Secret Lair",
+      "variant": "Foil",
+      "category": "single",
+      "card": {
+        "scryfall_id": "3faa8c5e-9e1b-4cee-b322-a033bf33dcbc",
+        "card_name": "Hymn to Tourach",
+        "set_code": "ema",
+        "set_name": "Eternal Masters",
+        "collector_number": "92",
+        "image_url": "https://cards.scryfall.io/normal/front/3/f/3faa8c5e-9e1b-4cee-b322-a033bf33dcbc.jpg?1783937597",
+        "scryfall_uri": "https://scryfall.com/card/ema/92/hymn-to-tourach?utm_source=api",
+        "treatment": "Halo Foil",
+        "market_usd": 1.74,
+        "market_cad": 2.42,
+        "approximate": true
+      },
+      "msrp": null,
+      "deal_score": 77,
+      "last_restock_date": null
+    },
+    {
+      "group_key": "drop eleven lair mage secret series",
+      "name": "Eleven, the Mage [Secret Lair Drop Series]",
+      "price": 15,
+      "retailer": "House of Cards",
+      "url": "https://houseofcards.ca/products/eleven-the-mage-secret-lair-drop",
+      "is_preorder": false,
+      "updated": "2026-09-07T05:23:01.559155",
+      "all_time_low": 15,
+      "price_change_7d": -6.25,
+      "history": [
+        {
+          "date": "2026-08-06",
+          "price": 17,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-07",
+          "price": 17,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-08",
+          "price": 17,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-09",
+          "price": 17,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-10",
+          "price": 17,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-11",
+          "price": 17,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-12",
+          "price": 17,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-13",
+          "price": 17,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-14",
+          "price": 17,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-15",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-16",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-17",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-18",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-19",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-20",
+          "price": 17,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-21",
+          "price": 17,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-22",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-23",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-24",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-25",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-26",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-27",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-28",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-01",
+          "price": 20.7,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-02",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-03",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-04",
+          "price": 15,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-05",
+          "price": 15,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-06",
+          "price": 15,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-07",
+          "price": 15,
+          "retailer": "House of Cards"
+        }
+      ],
+      "history_days": 90,
+      "price_change_1d": 0,
+      "price_change_30d": -11.76470588235294,
+      "pack_count": null,
+      "price_per_pack": null,
+      "image_url": "https://cdn.shopify.com/s/files/1/0567/4178/9882/files/11057edf-45ad-5a92-a8de-e7cfafe69cf2.jpg?v=1772082145",
+      "other_retailers": [
+        {
+          "retailer": "Fusion Gaming",
+          "price": 23.43,
+          "url": "https://fusiongamingonline.com/products/eleven-the-mage-secret-lair-drop-series",
+          "in_stock": true,
+          "stock_qty": null
+        }
+      ],
+      "is_new": false,
+      "in_stock": true,
+      "back_in_stock": false,
+      "language": "English",
+      "product_type": "Secret Lair",
+      "set_name": "Secret Lair",
+      "variant": "",
+      "category": "single",
+      "card": {
+        "scryfall_id": "33e1e8fc-77b4-409d-9fc4-7bc6f6ae3e26",
+        "card_name": "Cecily, Haunted Mage",
+        "set_code": "sld",
+        "set_name": "Secret Lair Drop",
+        "collector_number": "343",
+        "image_url": "https://cards.scryfall.io/normal/front/3/3/33e1e8fc-77b4-409d-9fc4-7bc6f6ae3e26.jpg?1783925171",
+        "scryfall_uri": "https://scryfall.com/card/sld/343/cecily-haunted-mage?utm_source=api",
+        "treatment": "Non-Foil",
+        "market_usd": 12.69,
+        "market_cad": 17.64,
+        "approximate": true
+      },
+      "msrp": null,
+      "deal_score": 77,
+      "last_restock_date": null
+    },
+    {
+      "group_key": "alternate art birthing borderless countdown kit lair pod secret",
+      "name": "Birthing Pod (Borderless Alternate Art) [Secret Lair Countdown Kit]",
+      "price": 16,
+      "retailer": "House of Cards",
+      "url": "https://houseofcards.ca/products/birthing-pod-borderless-alternate-art-secret-lair-30th-anniversary-countdown-kit",
+      "is_preorder": false,
+      "updated": "2026-09-07T05:23:02.838953",
+      "all_time_low": 16,
+      "price_change_7d": -5.88,
+      "history": [
+        {
+          "date": "2026-08-06",
+          "price": 20,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-07",
+          "price": 20,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-08",
+          "price": 20,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-09",
+          "price": 20,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-10",
+          "price": 19,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-11",
+          "price": 19,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-12",
+          "price": 19,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-13",
+          "price": 19,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-14",
+          "price": 19,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-15",
+          "price": 19,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-16",
+          "price": 19,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-17",
+          "price": 19,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-18",
+          "price": 19,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-19",
+          "price": 18,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-20",
+          "price": 19,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-21",
+          "price": 19,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-22",
+          "price": 18,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-23",
+          "price": 18,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-24",
+          "price": 18,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-25",
+          "price": 18,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-26",
+          "price": 18,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-27",
+          "price": 17,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-28",
+          "price": 17,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-01",
+          "price": 21.7,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-02",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-03",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-04",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-05",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-06",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-07",
+          "price": 16,
+          "retailer": "House of Cards"
+        }
+      ],
+      "history_days": 90,
+      "price_change_1d": 0,
+      "price_change_30d": -20,
+      "pack_count": null,
+      "price_per_pack": null,
+      "image_url": "https://cdn.shopify.com/s/files/1/0567/4178/9882/files/8fd7bf1d-fd8c-5506-a2b0-05dea4f4b1d4.jpg?v=1766520069",
+      "other_retailers": [],
+      "is_new": false,
+      "in_stock": true,
+      "back_in_stock": false,
+      "language": "English",
+      "product_type": "Secret Lair",
+      "set_name": "Secret Lair",
+      "variant": "",
+      "category": "single",
+      "card": {
+        "scryfall_id": "86c499a6-1f5e-4f13-8d7d-bc7ca65910eb",
+        "card_name": "Birthing Pod",
+        "set_code": "sld",
+        "set_name": "Secret Lair Drop",
+        "collector_number": "2349",
+        "image_url": "https://cards.scryfall.io/normal/front/8/6/86c499a6-1f5e-4f13-8d7d-bc7ca65910eb.jpg?1783903467",
+        "scryfall_uri": "https://scryfall.com/card/sld/2349/birthing-pod?utm_source=api",
+        "treatment": "Non-Foil",
+        "market_usd": 15.27,
+        "market_cad": 21.23,
+        "approximate": true
+      },
+      "msrp": null,
+      "deal_score": 76,
+      "last_restock_date": null
+    },
+    {
+      "group_key": "barkchannel borderless edition lair pathway secret tidechannel ultimate",
+      "name": "Barkchannel Pathway // Tidechannel Pathway (Borderless) [Secret Lair: Ultimate Edition 2]",
+      "price": 15,
+      "retailer": "House of Cards",
+      "url": "https://houseofcards.ca/products/barkchannel-pathway-borderless-secret-lair-ultimate-edition",
+      "is_preorder": false,
+      "updated": "2026-09-07T05:23:02.150051",
+      "all_time_low": 12,
+      "price_change_7d": 7.14,
+      "history": [
+        {
+          "date": "2026-08-06",
+          "price": 14,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-07",
+          "price": 14,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-08",
+          "price": 14,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-09",
+          "price": 14,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-10",
+          "price": 14,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-11",
+          "price": 14,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-12",
+          "price": 14,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-13",
+          "price": 14,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-14",
+          "price": 14,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-15",
+          "price": 14,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-16",
+          "price": 14,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-17",
+          "price": 14,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-18",
+          "price": 14,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-19",
+          "price": 14,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-20",
+          "price": 14,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-21",
+          "price": 15,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-22",
+          "price": 14,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-23",
+          "price": 14,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-24",
+          "price": 14,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-25",
+          "price": 14,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-26",
+          "price": 14,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-27",
+          "price": 14,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-28",
+          "price": 14,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-01",
+          "price": 18.8,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-02",
+          "price": 14,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-03",
+          "price": 14,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-04",
+          "price": 14,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-05",
+          "price": 14,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-06",
+          "price": 15,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-07",
+          "price": 15,
+          "retailer": "House of Cards"
+        }
+      ],
+      "history_days": 90,
+      "price_change_1d": 0,
+      "price_change_30d": 7.142857142857142,
+      "pack_count": null,
+      "price_per_pack": null,
+      "image_url": "https://cdn.shopify.com/s/files/1/0567/4178/9882/files/fd26aa4f-fb3c-5969-8ebb-daa0ba538850.jpg?v=1785096443",
+      "other_retailers": [
+        {
+          "retailer": "Fusion Gaming",
+          "price": 13.73,
+          "url": "https://fusiongamingonline.com/products/barkchannel-pathway-tidechannel-pathway-borderless-secret-lair-ultimate-edition-2",
+          "in_stock": true,
+          "stock_qty": null
+        }
+      ],
+      "is_new": false,
+      "in_stock": true,
+      "back_in_stock": false,
+      "language": "English",
+      "product_type": "Secret Lair",
+      "set_name": "Secret Lair",
+      "variant": "",
+      "category": "single",
+      "card": {
+        "scryfall_id": "79631e0a-b962-48f1-98fa-d871b2862866",
+        "card_name": "Barkchannel Pathway // Tidechannel Pathway",
+        "set_code": "slu",
+        "set_name": "Secret Lair: Ultimate Edition",
+        "collector_number": "11",
+        "image_url": "https://cards.scryfall.io/normal/front/7/9/79631e0a-b962-48f1-98fa-d871b2862866.jpg?1783927917",
+        "scryfall_uri": "https://scryfall.com/card/slu/11/barkchannel-pathway-tidechannel-pathway?utm_source=api",
+        "treatment": "Non-Foil",
+        "market_usd": 11.6,
+        "market_cad": 16.12,
+        "approximate": true
+      },
+      "msrp": null,
+      "deal_score": 30,
+      "last_restock_date": null
+    },
+    {
+      "group_key": "blood broker foundations jumpstart vilis",
+      "name": "Vilis, Broker of Blood [Foundations Jumpstart]",
+      "price": 15.5,
+      "retailer": "Fusion Gaming",
+      "url": "https://fusiongamingonline.com/products/vilis-broker-of-blood-foundations-jumpstart",
+      "is_preorder": false,
+      "updated": "2026-09-01T17:10:09.382864",
+      "all_time_low": 10.14,
+      "price_change_7d": 42.2,
+      "history": [
+        {
+          "date": "2026-07-20",
+          "price": 10.17,
+          "retailer": "Fusion Gaming"
+        },
+        {
+          "date": "2026-07-21",
+          "price": 10.14,
+          "retailer": "Fusion Gaming"
+        },
+        {
+          "date": "2026-07-22",
+          "price": 10.21,
+          "retailer": "Fusion Gaming"
+        },
+        {
+          "date": "2026-07-23",
+          "price": 10.29,
+          "retailer": "Fusion Gaming"
+        },
+        {
+          "date": "2026-07-24",
+          "price": 10.27,
+          "retailer": "Fusion Gaming"
+        },
+        {
+          "date": "2026-07-25",
+          "price": 10.2,
+          "retailer": "Fusion Gaming"
+        },
+        {
+          "date": "2026-07-26",
+          "price": 10.27,
+          "retailer": "Fusion Gaming"
+        },
+        {
+          "date": "2026-08-27",
+          "price": 10.9,
+          "retailer": "Fusion Gaming"
+        },
+        {
+          "date": "2026-08-28",
+          "price": 10.9,
+          "retailer": "Fusion Gaming"
+        },
+        {
+          "date": "2026-09-01",
+          "price": 15.5,
+          "retailer": "Fusion Gaming"
+        }
+      ],
+      "history_days": 43,
+      "price_change_1d": null,
+      "price_change_30d": null,
+      "pack_count": null,
+      "price_per_pack": null,
+      "image_url": "https://cdn.shopify.com/s/files/1/0604/1927/6878/files/ef2c8915-14a7-5cd9-a3f5-d870ffc0f823.png?v=1781831982",
+      "other_retailers": [],
+      "is_new": false,
+      "in_stock": true,
+      "back_in_stock": false,
+      "language": "English",
+      "product_type": "Jumpstart Booster",
+      "set_name": "Foundations",
+      "variant": "",
+      "category": "single",
+      "card": {
+        "scryfall_id": "ecdf2bd9-87b9-470a-ad2e-0ebf98560f87",
+        "card_name": "Vilis, Broker of Blood",
+        "set_code": "m20",
+        "set_name": "Core Set 2020",
+        "collector_number": "122",
+        "image_url": "https://cards.scryfall.io/normal/front/e/c/ecdf2bd9-87b9-470a-ad2e-0ebf98560f87.jpg?1783932985",
+        "scryfall_uri": "https://scryfall.com/card/m20/122/vilis-broker-of-blood?utm_source=api",
+        "treatment": "Non-Foil",
+        "market_usd": 10.19,
+        "market_cad": 14.16,
+        "approximate": true
+      },
+      "msrp": null,
+      "deal_score": 0,
+      "last_restock_date": null
+    },
+    {
+      "group_key": "dark deal drop foil lair rainbow secret series",
+      "name": "Dark Deal (Rainbow Foil) [Secret Lair Drop Series]",
+      "price": 16,
+      "retailer": "House of Cards",
+      "url": "https://houseofcards.ca/products/immerwolf-rainbow-foil-secret-lair-drop-series",
+      "is_preorder": false,
+      "updated": "2026-09-07T05:23:03.465146",
+      "all_time_low": 15,
+      "price_change_7d": 6.67,
+      "history": [
+        {
+          "date": "2026-08-06",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-07",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-08",
+          "price": 15,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-09",
+          "price": 15,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-10",
+          "price": 15,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-11",
+          "price": 15,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-12",
+          "price": 15,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-13",
+          "price": 15,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-14",
+          "price": 15,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-15",
+          "price": 15,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-16",
+          "price": 15,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-17",
+          "price": 15,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-18",
+          "price": 15,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-19",
+          "price": 15,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-20",
+          "price": 15.84,
+          "retailer": "Fusion Gaming"
+        },
+        {
+          "date": "2026-08-21",
+          "price": 15.88,
+          "retailer": "Fusion Gaming"
+        },
+        {
+          "date": "2026-08-22",
+          "price": 15.86,
+          "retailer": "Fusion Gaming"
+        },
+        {
+          "date": "2026-08-23",
+          "price": 15,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-24",
+          "price": 15,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-25",
+          "price": 15,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-26",
+          "price": 15,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-27",
+          "price": 15,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-08-28",
+          "price": 15,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-01",
+          "price": 20.3,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-02",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-03",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-04",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-05",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-06",
+          "price": 16,
+          "retailer": "House of Cards"
+        },
+        {
+          "date": "2026-09-07",
+          "price": 16,
+          "retailer": "House of Cards"
+        }
+      ],
+      "history_days": 90,
+      "price_change_1d": 0,
+      "price_change_30d": 6.666666666666667,
+      "pack_count": null,
+      "price_per_pack": null,
+      "image_url": "https://cdn.shopify.com/s/files/1/0567/4178/9882/files/0dd9874a-d587-5c9f-a098-fceb893cb0b9.png?v=1757109336",
+      "other_retailers": [
+        {
+          "retailer": "Fusion Gaming",
+          "price": 15.76,
+          "url": "https://fusiongamingonline.com/products/immerwolf-rainbow-foil-secret-lair-drop-series",
+          "in_stock": true,
+          "stock_qty": null
+        }
+      ],
+      "is_new": false,
+      "in_stock": true,
+      "back_in_stock": false,
+      "language": "English",
+      "product_type": "Secret Lair",
+      "set_name": "Secret Lair",
+      "variant": "Foil",
+      "category": "single",
+      "card": {
+        "scryfall_id": "0e234227-d91e-4049-ad4a-3beca6b89023",
+        "card_name": "Dark Deal",
+        "set_code": "sld",
+        "set_name": "Secret Lair Drop",
+        "collector_number": "873",
+        "image_url": "https://cards.scryfall.io/normal/front/0/e/0e234227-d91e-4049-ad4a-3beca6b89023.jpg?1783909719",
+        "scryfall_uri": "https://scryfall.com/card/sld/873/dark-deal?utm_source=api",
+        "treatment": "Rainbow Foil",
+        "market_usd": 13.91,
+        "market_cad": 19.33,
+        "approximate": true
+      },
+      "msrp": null,
+      "deal_score": 52,
+      "last_restock_date": null
+    },
+    {
+      "group_key": "booster box into journey korean mtg nyx",
+      "name": "MTG - Journey into Nyx - Korean Booster Box",
+      "price": 3.95,
+      "retailer": "401 Games",
+      "url": "https://store.401games.ca/products/mtg-journey-into-nyx-korean-booster-pack",
+      "is_preorder": false,
+      "updated": "2026-09-07T05:23:02.138679",
+      "all_time_low": 3.95,
+      "price_change_7d": 0,
+      "history": [
+        {
+          "date": "2026-08-06",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-07",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-08",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-09",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-10",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-11",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-12",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-13",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-14",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-15",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-16",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-17",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-18",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-19",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-20",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-21",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-22",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-23",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-24",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-25",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-26",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-27",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-28",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-09-01",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-09-02",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-09-03",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-09-04",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-09-05",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-09-06",
+          "price": 3.95,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-09-07",
+          "price": 3.95,
+          "retailer": "401 Games"
+        }
+      ],
+      "history_days": 90,
+      "price_change_1d": 0,
+      "price_change_30d": 0,
+      "pack_count": 36,
+      "price_per_pack": 0.10972222222222222,
+      "image_url": "https://cdn.shopify.com/s/files/1/1704/1809/files/MTG-Journey-into-Nyx-Korean-Booster-Box.jpg?v=1692950439",
+      "other_retailers": [],
+      "is_new": false,
+      "in_stock": false,
+      "back_in_stock": false,
+      "language": "English",
+      "product_type": "Booster Box",
+      "set_name": "",
+      "variant": "",
+      "category": "sealed",
+      "msrp": null,
+      "deal_score": 60,
+      "last_restock_date": null
+    },
+    {
+      "group_key": "booster eclipsed lorwyn play",
+      "name": "Magic The Gathering - Lorwyn Eclipsed - Play Booster Box",
+      "price": 8.99,
+      "retailer": "EB Games",
+      "url": "https://www.ebgames.ca/Trading%20Cards/Games/959963/magic-the-gathering-lorwyn-eclipsed-play-booster",
+      "is_preorder": false,
+      "updated": "2026-06-13T17:12:35.184370",
+      "all_time_low": 8.99,
+      "price_change_7d": null,
+      "history": [
+        {
+          "date": "2026-06-13",
+          "price": 8.99,
+          "retailer": "EB Games"
+        }
+      ],
+      "history_days": 0,
+      "price_change_1d": null,
+      "price_change_30d": null,
+      "pack_count": 36,
+      "price_per_pack": 0.24972222222222223,
+      "image_url": "https://static-ca.gamestop.ca/images/products/865560/2med.jpg",
+      "other_retailers": [],
+      "is_new": false,
+      "in_stock": true,
+      "back_in_stock": false,
+      "language": "English",
+      "product_type": "Play Booster Box",
+      "set_name": "",
+      "variant": "",
+      "category": "sealed",
+      "msrp": null,
+      "deal_score": 60,
+      "last_restock_date": null
+    },
+    {
+      "group_key": "booster box crimson draft innistrad vow",
+      "name": "Innistrad: Crimson Vow - Draft Booster Pack",
+      "price": 4,
+      "retailer": "GT Games",
+      "url": "https://gtgames.ca/products/innistrad-crimson-vow-draft-booster-pack",
+      "is_preorder": false,
+      "updated": "2026-07-12T14:22:13.068310",
+      "all_time_low": 4,
+      "price_change_7d": null,
+      "history": [
+        {
+          "date": "2026-07-12",
+          "price": 4,
+          "retailer": "GT Games"
+        }
+      ],
+      "history_days": 0,
+      "price_change_1d": null,
+      "price_change_30d": null,
+      "pack_count": null,
+      "price_per_pack": null,
+      "image_url": "https://cdn.shopify.com/s/files/1/1594/2721/products/en_rffrtJI4H81.png?v=1713311431",
+      "other_retailers": [],
+      "is_new": false,
+      "in_stock": true,
+      "back_in_stock": false,
+      "language": "English",
+      "product_type": "Draft Booster",
+      "set_name": "Innistrad: Crimson Vow",
+      "variant": "",
+      "category": "sealed",
+      "msrp": null,
+      "deal_score": 60,
+      "last_restock_date": null
+    },
+    {
+      "group_key": "booster chinese innistrad mtg over pack shadows",
+      "name": "MTG - Shadows over Innistrad Chinese Booster Pack",
+      "price": 4.25,
+      "retailer": "401 Games",
+      "url": "https://store.401games.ca/products/mtg-shadows-over-innistrad-chinese-booster-pack",
+      "is_preorder": false,
+      "updated": "2026-09-07T05:23:03.428795",
+      "all_time_low": 4.25,
+      "price_change_7d": 0,
+      "history": [
+        {
+          "date": "2026-08-06",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-07",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-08",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-09",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-10",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-11",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-12",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-13",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-14",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-15",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-16",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-17",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-18",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-19",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-20",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-21",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-22",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-23",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-24",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-25",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-26",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-27",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-28",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-09-01",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-09-02",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-09-03",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-09-04",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-09-05",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-09-06",
+          "price": 4.25,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-09-07",
+          "price": 4.25,
+          "retailer": "401 Games"
+        }
+      ],
+      "history_days": 90,
+      "price_change_1d": 0,
+      "price_change_30d": 0,
+      "pack_count": null,
+      "price_per_pack": null,
+      "image_url": "https://cdn.shopify.com/s/files/1/1704/1809/files/MTG-Shadows-over-Innistrad-Chinese-Booster-Pack.jpg?v=1692950149",
+      "other_retailers": [],
+      "is_new": false,
+      "in_stock": true,
+      "back_in_stock": false,
+      "language": "English",
+      "product_type": "Booster Pack",
+      "set_name": "Shadows over Innistrad",
+      "variant": "",
+      "category": "sealed",
+      "msrp": null,
+      "deal_score": 60,
+      "last_restock_date": null
+    },
+    {
+      "group_key": "booster ixalan korean mtg pack rivals",
+      "name": "MTG - Rivals of Ixalan - Russian Booster Pack",
+      "price": 4.43,
+      "retailer": "401 Games",
+      "url": "https://store.401games.ca/products/mtg-rivals-of-ixalan-korean-booster-pack",
+      "is_preorder": false,
+      "updated": "2026-09-07T05:23:03.451502",
+      "all_time_low": 4.43,
+      "price_change_7d": 0,
+      "history": [
+        {
+          "date": "2026-08-06",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-07",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-08",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-09",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-10",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-11",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-12",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-13",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-14",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-15",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-16",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-17",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-18",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-19",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-20",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-21",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-22",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-23",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-24",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-25",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-26",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-27",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-08-28",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-09-01",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-09-02",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-09-03",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-09-04",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-09-05",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-09-06",
+          "price": 4.43,
+          "retailer": "401 Games"
+        },
+        {
+          "date": "2026-09-07",
+          "price": 4.43,
+          "retailer": "401 Games"
+        }
+      ],
+      "history_days": 90,
+      "price_change_1d": 0,
+      "price_change_30d": 0,
+      "pack_count": null,
+      "price_per_pack": null,
+      "image_url": "https://cdn.shopify.com/s/files/1/1704/1809/files/MTG-Rivals-of-Ixalan-English-Booster-Pack.png?v=1692965336",
+      "other_retailers": [],
+      "is_new": false,
+      "in_stock": true,
+      "back_in_stock": false,
+      "language": "English",
+      "product_type": "Booster Pack",
+      "set_name": "Rivals of Ixalan",
+      "variant": "",
+      "category": "sealed",
+      "msrp": null,
+      "deal_score": 60,
+      "last_restock_date": null
+    }
+  ]
+}

@@ -8,52 +8,21 @@ import { hasReliableLow } from "../lib/products";
 import DealScoreBreakdown from "./DealScoreBreakdown";
 import { SHIPPING_THRESHOLDS } from "../lib/shipping";
 import { computePackCount } from "../lib/packCount";
-import type { CardEnrichment } from "../lib/products";
 import { sizedImage, thumbSrcSet, THUMB } from "../lib/images";
 import PriceVerdict from "./PriceVerdict";
 
-type HistoryEntry = {
-  date: string;
-  price: number;
-  retailer: string;
-};
 
-export type RetailerPrice = {
-  retailer: string;
-  price: number;
-  url: string;
-  in_stock: boolean;
-  stock_qty: number | null;
-};
-
-export type Product = {
-  group_key: string;
-  name: string;
-  price: number;
-  retailer: string;
-  url: string;
-  is_preorder: boolean;
-  updated: string;
-  all_time_low: number;
-  price_change_7d: number | null;
-  history: HistoryEntry[];
-  image_url: string;
-  other_retailers: RetailerPrice[];
-  is_new: boolean;
-  in_stock: boolean;
-  back_in_stock: boolean;
-  language: string;
-  product_type: string;
-  set_name: string;
-  variant: string;
-  /** Optional so older cached API payloads without it keep rendering. */
-  category?: "sealed" | "single";
-  /** Scryfall card data — present only on enriched singles. */
-  card?: CardEnrichment;
-  msrp: number | null;
-  deal_score: number;
-  last_restock_date?: string | null;
-};
+/**
+ * The product shape is defined once in lib/products and re-exported here so
+ * the many components importing it from this file keep working.
+ *
+ * This used to be a second, hand-maintained copy: it made `category` and
+ * `last_restock_date` optional where the source has them required, and it
+ * silently lacked every field added since — so components reading it could
+ * not see them, and the two definitions drifted without any error.
+ */
+import type { Product, RetailerPrice, CardEnrichment, HistoryEntry } from "../lib/products";
+export type { Product, RetailerPrice, CardEnrichment, HistoryEntry };
 
 type ProductCardProps = {
   product: Product;

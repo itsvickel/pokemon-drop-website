@@ -216,3 +216,29 @@ describe("computePackCount — year confusion", () => {
     expect(computePackCount("Bulk lot 5000 boosters")).toBeNull();
   });
 });
+
+describe("selectMovers — direction split", () => {
+  const mk = (over: Partial<Product>) =>
+    product({ history: [h(60, 1), h(1, 1)], ...over });
+
+  it("never puts the same product in both columns", () => {
+    // With fewer eligible items than the limit, sorting one pool two ways used
+    // to return every product in both directions.
+    const m = selectMovers([
+      mk({ group_key: "a", price_change_7d: 12 }),
+      mk({ group_key: "b", price_change_7d: 8 }),
+    ]);
+    const ids = [...m.risers, ...m.fallers].map((p) => p.group_key);
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(m.fallers).toHaveLength(0);
+  });
+
+  it("keeps risers positive and fallers negative", () => {
+    const m = selectMovers([
+      mk({ group_key: "up", price_change_7d: 12 }),
+      mk({ group_key: "down", price_change_7d: -12 }),
+    ]);
+    m.risers.forEach((p) => expect(p.price_change_7d!).toBeGreaterThan(0));
+    m.fallers.forEach((p) => expect(p.price_change_7d!).toBeLessThan(0));
+  });
+});
