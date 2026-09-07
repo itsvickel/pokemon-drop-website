@@ -128,3 +128,19 @@
   .change { grid-column: 3; min-width: 0; }
   .price { grid-column: 3; }
 }
+
+/* Market index. Stated with its sample size rather than presented as an
+   authority — an index over nine products is not an index. */
+.index {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-left: 3px solid var(--game, #58a6ff);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin: 0 0 22px;
+  color: #8b949e;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  max-width: 72ch;
+}
+.index strong { font-size: 1.05rem; font-variant-numeric: tabular-nums; margin-right: 4px; }

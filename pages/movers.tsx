@@ -8,6 +8,7 @@ import GameSubNav from "../components/GameSubNav";
 import Footer from "../components/Footer";
 import { sizedImage, thumbSrcSet, THUMB } from "../lib/images";
 import { selectMovers, type MoverWindow } from "../lib/movers";
+import { describeIndex, marketIndex } from "../lib/marketIndex";
 import { TCG_CONFIGS, type TcgSlug } from "../lib/tcg.config";
 import type { Product } from "../lib/products";
 import styles from "../styles/Movers.module.css";
@@ -83,6 +84,9 @@ export default function MoversPage() {
   });
 
   const { risers, fallers } = selectMovers(data?.products ?? [], field);
+  // One number for "how is the market doing" — median, with its sample size
+  // stated, and withheld entirely when the sample is too thin to mean anything.
+  const index = marketIndex(data?.products ?? [], field);
   const windowLabel = WINDOWS.find((w) => w.key === field)?.label ?? "7 days";
   const empty = !isLoading && !error && risers.length === 0 && fallers.length === 0;
 
@@ -121,6 +125,18 @@ export default function MoversPage() {
             ))}
           </div>
         </header>
+
+        {!isLoading && !error && (
+          <p className={index.change === null ? styles.state : styles.index}>
+            {index.change !== null && (
+              <strong className={index.change > 0 ? styles.up : index.change < 0 ? styles.down : ""}>
+                {index.change > 0 ? "▲" : index.change < 0 ? "▼" : "■"}{" "}
+                {index.change > 0 ? "+" : ""}{index.change.toFixed(2)}%
+              </strong>
+            )}{" "}
+            {describeIndex(index, config.shortName)}
+          </p>
+        )}
 
         {isLoading && <p className={styles.state}>Loading movers…</p>}
         {error && <p className={styles.state} role="alert">Could not load prices. Try again shortly.</p>}

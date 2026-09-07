@@ -1,4 +1,4 @@
-import { priceVerdict } from "../lib/insights";
+import { discountCheck, priceVerdict, pricePercentile } from "../lib/insights";
 import { SHIPPING_POLICIES } from "../lib/shipping";
 import type { HistoryEntry } from "../lib/products";
 import styles from "../styles/PriceVerdict.module.css";
@@ -40,12 +40,35 @@ export default function PriceVerdict({ price, history, retailer, compact = false
 
   if (verdict.tone === "unknown") return null;
 
+  // "Cheaper than 91% of the last 90 days" is a far stronger claim than a badge,
+  // and it is the same data either way.
+  const percentile = pricePercentile(price, history);
+  const stale = discountCheck(price, history);
+
+  const detail = [
+    verdict.detail,
+    percentile !== null && percentile >= 60 ? `Cheaper than ${percentile}% of the last 90 days.` : null,
+    stale.message,
+  ].filter(Boolean).join(" ");
+
   return (
-    <span
-      className={`${styles.badge} ${styles[verdict.tone]} ${compact ? styles.compact : ""}`}
-      title={verdict.detail}
-    >
-      {verdict.label}
+    <span className={styles.group}>
+      <span
+        className={`${styles.badge} ${styles[verdict.tone]} ${compact ? styles.compact : ""}`}
+        title={detail}
+      >
+        {verdict.label}
+      </span>
+      {percentile !== null && percentile >= 75 && !compact && (
+        <span className={styles.percentile} title={detail}>
+          cheaper than {percentile}% of the last 90 days
+        </span>
+      )}
+      {stale.suspicious && !compact && (
+        <span className={styles.stale} title={stale.message ?? undefined}>
+          unchanged {stale.daysAtPrice}d
+        </span>
+      )}
     </span>
   );
 }
