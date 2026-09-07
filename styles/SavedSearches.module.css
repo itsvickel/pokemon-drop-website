@@ -1,0 +1,80 @@
+/* Saved searches sit with the filters they restore, which is the whole point —
+   as a separate page they would just be bookmarks. */
+
+.wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 12px 0 0;
+}
+
+.list { list-style: none; display: flex; gap: 6px; flex-wrap: wrap; margin: 0; padding: 0; }
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 20px;
+  padding: 2px 4px 2px 10px;
+}
+.item:hover { border-color: var(--game, #58a6ff); }
+
+.link {
+  color: #c9d1d9;
+  font-size: 0.78rem;
+  text-decoration: none;
+  max-width: 190px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.link:hover { color: var(--game, #58a6ff); }
+
+.remove {
+  background: none;
+  border: none;
+  color: #6e7681;
+  cursor: pointer;
+  font-size: 0.9rem;
+  line-height: 1;
+  padding: 2px 5px;
+  border-radius: 50%;
+}
+.remove:hover { color: #f85149; }
+.remove:focus-visible { outline: 2px solid #58a6ff; outline-offset: 1px; }
+
+.saveBtn, .save, .cancel {
+  background: none;
+  border: 1px dashed #30363d;
+  color: #8b949e;
+  border-radius: 20px;
+  padding: 3px 12px;
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+.saveBtn:hover, .save:hover, .cancel:hover { border-color: var(--game, #58a6ff); color: #c9d1d9; }
+.saveBtn:focus-visible, .save:focus-visible, .cancel:focus-visible {
+  outline: 2px solid #58a6ff;
+  outline-offset: 2px;
+}
+.save { border-style: solid; border-color: var(--game, #58a6ff); color: #c9d1d9; }
+
+.form { display: inline-flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+
+.input {
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 20px;
+  color: #c9d1d9;
+  padding: 4px 12px;
+  font: inherit;
+  font-size: 0.78rem;
+  min-width: 170px;
+}
+.input:focus-visible { outline: 2px solid #58a6ff; outline-offset: 1px; }
+
+.savedNote { color: #3fb950; font-size: 0.76rem; }

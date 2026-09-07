@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import SavedSearches from "./SavedSearches";
 import useSWR from "swr";
 import ProductCard, { Product } from "./ProductCard";
 import ProductDetailModal from "./ProductDetailModal";
@@ -184,8 +185,9 @@ export default function ProductsPage({
   }, [router.isReady]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Write filters back to URL ────────────────────────────────────────────
-  useEffect(() => {
-    if (!urlReady) return;
+  // Built once and shared with the saved-search link below, so a saved search
+  // can never drift out of sync with what the URL actually encodes.
+  const filterParams = useMemo(() => {
     const params: Record<string, string> = {};
     if (query)              params.q     = query;
     if (sort !== "price_asc")   params.s = sort;
@@ -201,10 +203,26 @@ export default function ProductsPage({
     if (lowOnly)            params.l     = "1";
     if (newOnly)            params.n     = "1";
     if (wishlistOnly)       params.w     = "1";
-    if (compareList.length > 0) params.compare = compareList.map((p) => p.group_key).join(",");
+    return params;
+  }, [query, sort, retailer, language, productType, setName, priceMin, priceMax,
+      inStockOnly, hidePreorders, dealsOnly, lowOnly, newOnly, wishlistOnly]);
+
+  useEffect(() => {
+    if (!urlReady) return;
+    // Compare selection rides in the URL so a comparison can be linked, but it
+    // is a transient selection rather than a filter, so it stays out of
+    // filterParams and therefore out of saved searches.
+    const params = compareList.length > 0
+      ? { ...filterParams, compare: compareList.map((p) => p.group_key).join(",") }
+      : filterParams;
     void router.replace({ query: params }, undefined, { shallow: true });
-  }, [query, sort, retailer, language, productType, setName, priceMin, priceMax, // eslint-disable-line react-hooks/exhaustive-deps
-      inStockOnly, hidePreorders, dealsOnly, lowOnly, newOnly, wishlistOnly, urlReady, compareList]);
+  }, [filterParams, urlReady, compareList]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // The path a saved search restores: this listing plus its current filters.
+  const savedSearchHref = useMemo(() => {
+    const qs = new URLSearchParams(filterParams).toString();
+    return qs ? `${router.pathname}?${qs}` : router.pathname;
+  }, [filterParams, router.pathname]);
 
   const allProducts = data?.products ?? [];
 
@@ -376,6 +394,10 @@ export default function ProductsPage({
     setName !== "all", priceMin, priceMax, inStockOnly, hidePreorders,
     dealsOnly, lowOnly, newOnly, wishlistOnly,
   ].filter(Boolean).length;
+
+  // Filters the visitor chose, as opposed to the ones the view turns on for
+  // them. Only these are worth offering to save.
+  const chosenFilterCount = activeFilterCount - (view === "deals" && dealsOnly ? 1 : 0);
 
   function handleRetailerClick(name: string) {
     setRetailer((prev) => (prev === name ? "all" : name));
@@ -711,6 +733,12 @@ export default function ProductsPage({
               </button>
             )}
           </div>
+
+          <SavedSearches
+            href={savedSearchHref}
+            tcg={tcg}
+            activeFilterCount={chosenFilterCount}
+          />
         </section>
 
         {/* ── MTG Commander Decks quick-filter ────────────────────────────── */}
