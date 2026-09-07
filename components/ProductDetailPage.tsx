@@ -20,6 +20,8 @@ import { computePackCount } from "../lib/packCount";
 import styles from "../styles/ProductDetailPage.module.css";
 import { sizedImage, DETAIL } from "../lib/images";
 import { changeOver, roiSinceFirstSeen } from "../lib/insights";
+import { breadcrumbJsonLd, jsonLdString, productJsonLd } from "../lib/structuredData";
+import { setSlug } from "../lib/movers";
 
 type TooltipPayload = {
   active?: boolean;
@@ -66,11 +68,17 @@ function stripTracking(url: string): string {
 type Props = {
   tcg: TcgSlug;
   groupKey: string;
+  /**
+   * Rendered on the server so crawlers (and the first paint) see the real
+   * product rather than a skeleton. When present the client still refetches
+   * for fresh prices, but never shows a loading state.
+   */
+  initialProduct?: Product | null;
 };
 
-export default function ProductDetailPage({ tcg, groupKey }: Props) {
-  const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function ProductDetailPage({ tcg, groupKey, initialProduct = null }: Props) {
+  const [product, setProduct] = useState<Product | null>(initialProduct);
+  const [loading, setLoading] = useState(!initialProduct);
   const [error, setError] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [showZoom, setShowZoom] = useState(false);
@@ -83,7 +91,7 @@ export default function ProductDetailPage({ tcg, groupKey }: Props) {
   }, [tcg]);
 
   useEffect(() => {
-    setLoading(true);
+    if (!initialProduct) setLoading(true);
     setError("");
     // One product with its full history, rather than the entire 2,645-item
     // catalogue filtered down to a single record on the client.
@@ -99,6 +107,7 @@ export default function ProductDetailPage({ tcg, groupKey }: Props) {
       })
       .catch((err: Error) => setError(err.message || "Failed to load product data."))
       .finally(() => setLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tcg, groupKey]);
 
   const handleShare = async () => {
@@ -125,6 +134,17 @@ export default function ProductDetailPage({ tcg, groupKey }: Props) {
   const change30d = product ? changeOver(product.history, product.price, 30) : null;
   const roi = product ? roiSinceFirstSeen(product.price, product.history) : null;
 
+  const jsonLd = product ? jsonLdString(productJsonLd(product, tcg)) : null;
+  const breadcrumb = product
+    ? jsonLdString(
+        breadcrumbJsonLd([
+          { name: tcgLabel, path: `${tcg}/sealed` },
+          ...(product.set_name ? [{ name: product.set_name, path: `sets/${setSlug(product.set_name)}?tcg=${tcg}` }] : []),
+          { name: product.name, path: `${tcg}/${groupKey}` },
+        ])
+      )
+    : null;
+
   const allRetailers = product
     ? [
         { retailer: product.retailer, price: product.price, url: product.url, in_stock: product.in_stock },
@@ -150,6 +170,17 @@ export default function ProductDetailPage({ tcg, groupKey }: Props) {
         <meta property="og:description" content={pageDescription} />
         <meta property="og:type" content="product" />
         <link rel="canonical" href={absoluteUrl(`${tcg}/${groupKey}`)} />
+        {jsonLd && (
+          <script
+            type="application/ld+json"
+            // Serialised through jsonLdString, which escapes "<" so a product
+            // name cannot terminate this tag early.
+            dangerouslySetInnerHTML={{ __html: jsonLd }}
+          />
+        )}
+        {breadcrumb && (
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumb }} />
+        )}
       </Head>
 
       <GameTabBar tcg={tcg} />

@@ -15,6 +15,8 @@ import CompareModal, { CompareBar } from "./CompareModal";
 import { TCG_CONFIGS, type TcgSlug } from "../lib/tcg.config";
 import { LOW_LABEL, LOW_LABEL_TITLE, RETAILER_CLAIM, UPDATE_CADENCE } from "../lib/siteFacts";
 import { deliveredSortKey } from "../lib/shipping";
+import { itemListJsonLd, jsonLdString } from "../lib/structuredData";
+import { absoluteUrl } from "../lib/siteUrl";
 
 type ApiResponse = {
   products: Product[];
@@ -66,9 +68,29 @@ function isAtAllTimeLow(product: Product): boolean {
   return product.price <= product.all_time_low + 0.0001;
 }
 
-type Props = { tcg: TcgSlug; view?: GameSection };
+type Props = {
+  tcg: TcgSlug;
+  view?: GameSection;
+  /**
+   * A small slice of the catalogue rendered on the server so crawlers see real
+   * products and prices instead of an empty shell.
+   *
+   * Deliberately NOT the whole feed: that is 5.19 MB, and passing it as props
+   * would inline all of it into the HTML as __NEXT_DATA__ — trading an invisible
+   * page for an enormous one. SWR still fetches the full list for filtering.
+   */
+  initialProducts?: Product[];
+  initialGeneratedAt?: string;
+  initialRetailersCount?: number;
+};
 
-export default function ProductsPage({ tcg, view = "sealed" }: Props) {
+export default function ProductsPage({
+  tcg,
+  view = "sealed",
+  initialProducts,
+  initialGeneratedAt,
+  initialRetailersCount,
+}: Props) {
   const config  = TCG_CONFIGS[tcg];
   const router  = useRouter();
   const wishlist = useWishlist();
@@ -82,10 +104,27 @@ export default function ProductsPage({ tcg, view = "sealed" }: Props) {
   const [hotProduct, setHotProduct] = useState<Product | null>(null);
   const pendingAlertKey = useRef<string | null>(null);
 
+  const fallbackData = initialProducts
+    ? {
+        products: initialProducts,
+        generated_at: initialGeneratedAt ?? "",
+        retailers_count: initialRetailersCount ?? 0,
+      }
+    : undefined;
+
   const { data, error, isLoading } = useSWR<ApiResponse>(`/api/products?tcg=${tcg}`, fetcher, {
     refreshInterval: REFRESH_MS,
     revalidateOnFocus: false,
+    // Seeds the first render from the server slice, then revalidates to the
+    // full catalogue so filters and counts operate on everything.
+    fallbackData,
+    revalidateOnMount: true,
   });
+  // SWR keeps isLoading true while it revalidates, even when fallbackData has
+  // already given us products to show. Gating the grid on it would hide the
+  // server-rendered slice behind a skeleton and defeat the whole point.
+  const showSkeleton = isLoading && !(data?.products?.length);
+
 
   // ── Filter state ─────────────────────────────────────────────────────────
   const [query,         setQuery]         = useState("");
@@ -358,6 +397,12 @@ export default function ProductsPage({ tcg, view = "sealed" }: Props) {
   }
 
   const viewNoun = view === "singles" ? "singles" : "sealed product";
+
+  // Describes the first screen of results as a list, so the page is legible to
+  // a crawler as a set of products rather than an undifferentiated blob.
+  const listJsonLd = jsonLdString(
+    itemListJsonLd(visibleProducts, tcg, `${config.displayName} ${viewNoun}`)
+  );
   const viewTitle =
     view === "singles" ? `${config.displayName} Singles Price Tracker`
     : view === "deals" ? `${config.displayName} Deals — Price Drops`
@@ -376,6 +421,15 @@ export default function ProductsPage({ tcg, view = "sealed" }: Props) {
           property="og:description"
           content={`Live ${config.displayName} ${viewNoun} prices across ${RETAILER_CLAIM} Canadian retailers. Always find the best deal.`}
         />
+        {/* Every filter combination pushes params into the URL, so without a
+            self-referencing canonical each one is a separate indexable copy of
+            the same page. Filtered views are additionally noindexed: they are
+            useful to share, not to rank. */}
+        <link rel="canonical" href={absoluteUrl(`${tcg}/${view}`)} />
+        {activeFilterCount > 0 && <meta name="robots" content="noindex, follow" />}
+        {listJsonLd && (
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: listJsonLd }} />
+        )}
       </Head>
 
       {/* ── Game tab bar + section sub-nav ────────────────────────────────── */}
@@ -396,7 +450,7 @@ export default function ProductsPage({ tcg, view = "sealed" }: Props) {
           </div>
           <h1 className={styles.heroTitle}>{config.displayName}</h1>
           <p className={styles.heroTagline}>
-            Track {viewNoun} prices across {stats.retailers || "50"}+ Canadian retailers.
+            Track {viewNoun} prices across {stats.retailers || RETAILER_CLAIM.replace("+", "")}+ Canadian retailers.
             Prices updated automatically every 3 hours.
           </p>
           <div className={styles.heroStats}>
@@ -690,7 +744,7 @@ export default function ProductsPage({ tcg, view = "sealed" }: Props) {
         )}
 
         {/* ── Grid ────────────────────────────────────────────────────────── */}
-        {isLoading ? (
+        {showSkeleton ? (
           <section className={styles.grid}>
             {Array.from({ length: 12 }).map((_, i) => (
               <div key={i} className={styles.skeletonCard} aria-hidden="true" />

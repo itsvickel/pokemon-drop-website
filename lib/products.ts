@@ -506,3 +506,34 @@ export function toApiResponse(
     retailers_count: new Set(products.map((product) => product.retailer)).size
   };
 }
+
+/**
+ * Points kept per product in a server-rendered slice. Enough for the sparkline
+ * to have a shape; SWR swaps in the full series moments later.
+ */
+export const SSR_HISTORY_POINTS = 8;
+
+/**
+ * Shrink a product for embedding in server-rendered HTML.
+ *
+ * Two hard constraints, both learned from the build failing:
+ *
+ *   1. getStaticProps props must be JSON-serializable, and `card` is `undefined`
+ *      on every sealed product. A JSON round-trip drops undefined keys entirely,
+ *      which is what Next wants.
+ *   2. Next warns past 128 kB of page data. The whole point of server-rendering
+ *      is that a crawler sees real products — not that the catalogue ships twice —
+ *      so history is trimmed hard here.
+ *
+ * The client re-renders from the full feed on mount, so this shape only has to
+ * survive first paint and hydration.
+ */
+export function leanForSsr(product: Product): Product {
+  const history = product.history ?? [];
+  const lean: Product = {
+    ...product,
+    history: history.length > SSR_HISTORY_POINTS ? history.slice(-SSR_HISTORY_POINTS) : history,
+  };
+  // Drops undefined values, which getStaticProps rejects outright.
+  return JSON.parse(JSON.stringify(lean)) as Product;
+}

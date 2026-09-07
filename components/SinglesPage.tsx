@@ -46,9 +46,13 @@ function setNameOf(p: Product): string {
   return p.card?.set_name || p.set_name || "Unknown set";
 }
 
-type Props = { tcg: TcgSlug };
+type Props = {
+  tcg: TcgSlug;
+  /** Server-rendered first page — see ProductsPage for why it is a slice. */
+  initialProducts?: Product[];
+};
 
-export default function SinglesPage({ tcg }: Props) {
+export default function SinglesPage({ tcg, initialProducts }: Props) {
   const config = TCG_CONFIGS[tcg];
   const router = useRouter();
   const wishlist = useWishlist();
@@ -61,7 +65,17 @@ export default function SinglesPage({ tcg }: Props) {
   const { data, error, isLoading } = useSWR<ApiResponse>(`/api/products?tcg=${tcg}`, fetcher, {
     refreshInterval: REFRESH_MS,
     revalidateOnFocus: false,
+    // Seeds the first render from the server slice; SWR then revalidates to the
+    // full catalogue so filters operate on everything.
+    fallbackData: initialProducts
+      ? { products: initialProducts, generated_at: "", retailers_count: 0 }
+      : undefined,
   });
+
+  // SWR keeps isLoading true while it revalidates, even when fallbackData has
+  // already given us products. Gating the grid on it would hide the
+  // server-rendered slice behind a skeleton and defeat the point.
+  const showSkeleton = isLoading && !(data?.products?.length);
 
   const [query, setQuery] = useState("");
   const [treatment, setTreatment] = useState<string>("all");
@@ -267,7 +281,7 @@ export default function SinglesPage({ tcg }: Props) {
         )}
 
         {/* ── Card grid ─────────────────────────────────────────────────── */}
-        {isLoading ? (
+        {showSkeleton ? (
           <section className={styles.grid}>
             {Array.from({ length: 12 }).map((_, i) => (
               <div key={i} className={styles.skeleton} aria-hidden="true" />

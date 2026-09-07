@@ -66,3 +66,31 @@ export async function loadApiResponse(config: TcgConfig): Promise<ApiResponse> {
 
   return toApiResponse(state, history, stockChanges, config, enrichment);
 }
+
+/**
+ * Build-time / ISR cache for the whole feed.
+ *
+ * getStaticProps runs once per page, and a listing plus its product pages would
+ * otherwise re-fetch and re-transform the same multi-megabyte feed for each one.
+ * Cached per game for a short window so a burst of ISR regenerations shares one
+ * upstream read.
+ */
+const SSG_TTL_MS = 60 * 1000;
+const ssgCache = new Map<string, { expiresAt: number; value: Promise<ApiResponse> }>();
+
+export function loadApiResponseCached(config: TcgConfig): Promise<ApiResponse> {
+  const hit = ssgCache.get(config.slug);
+  if (hit && hit.expiresAt > Date.now()) return hit.value;
+  const value = loadApiResponse(config).catch((err) => {
+    ssgCache.delete(config.slug); // never cache a rejection
+    throw err;
+  });
+  ssgCache.set(config.slug, { expiresAt: Date.now() + SSG_TTL_MS, value });
+  return value;
+}
+
+/** One product with its full history, for a statically generated detail page. */
+export async function loadProduct(config: TcgConfig, groupKey: string) {
+  const feed = await loadApiResponseCached(config);
+  return feed.products.find((p) => p.group_key === groupKey) ?? null;
+}
