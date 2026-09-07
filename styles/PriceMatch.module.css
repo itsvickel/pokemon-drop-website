@@ -1,0 +1,87 @@
+/* Price-match helper. The generated message is the product here, so it gets the
+   visual weight and the copy button sits with it. */
+
+.wrap {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-left: 3px solid #d29922;
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin: 24px 0;
+}
+
+.title { font-size: 1rem; font-weight: 700; color: #c9d1d9; margin: 0 0 6px; }
+.lede { color: #8b949e; font-size: 0.88rem; line-height: 1.55; margin: 0 0 14px; max-width: 66ch; }
+
+.messageBox {
+  background: #0d1117;
+  border: 1px solid #21262d;
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.message {
+  color: #c9d1d9;
+  font-size: 0.86rem;
+  line-height: 1.6;
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.copyBtn {
+  background: #d29922;
+  color: #0d1117;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 14px;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.copyBtn:hover { filter: brightness(1.08); }
+.copyBtn:focus-visible { outline: 2px solid #58a6ff; outline-offset: 2px; }
+
+.others {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.other {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.83rem;
+}
+.otherName { color: #c9d1d9; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.otherSaving { color: #3fb950; font-variant-numeric: tabular-nums; margin-left: auto; white-space: nowrap; }
+
+.otherBtn {
+  background: none;
+  border: 1px solid #30363d;
+  color: #8b949e;
+  border-radius: 5px;
+  padding: 3px 9px;
+  font: inherit;
+  font-size: 0.76rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.otherBtn:hover { border-color: #d29922; color: #d29922; }
+.otherBtn:focus-visible { outline: 2px solid #58a6ff; outline-offset: 2px; }
+
+.caveat {
+  color: #6e7681;
+  font-size: 0.76rem;
+  line-height: 1.5;
+  margin: 12px 0 0;
+}

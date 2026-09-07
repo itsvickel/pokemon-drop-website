@@ -22,6 +22,7 @@ import { sizedImage, DETAIL } from "../lib/images";
 import { changeOver, roiSinceFirstSeen } from "../lib/insights";
 import { breadcrumbJsonLd, jsonLdString, productJsonLd } from "../lib/structuredData";
 import { setSlug } from "../lib/movers";
+import PriceMatchHelper from "./PriceMatchHelper";
 
 type TooltipPayload = {
   active?: boolean;
@@ -378,6 +379,8 @@ export default function ProductDetailPage({ tcg, groupKey, initialProduct = null
                   </div>
                 ))}
               </div>
+
+            <PriceMatchHelper product={product} />
             </section>
 
             {/* Price history chart */}
