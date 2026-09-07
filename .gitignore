@@ -19,3 +19,6 @@ out/
 
 # git worktrees
 .worktrees/
+
+# typescript incremental build cache
+*.tsbuildinfo
