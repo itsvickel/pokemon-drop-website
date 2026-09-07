@@ -1,4 +1,5 @@
 import Head from "next/head";
+import type { GetStaticProps } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR from "swr";
@@ -7,7 +8,8 @@ import GameSubNav from "../components/GameSubNav";
 import Footer from "../components/Footer";
 import { setSlug, setsWithCounts } from "../lib/movers";
 import { TCG_CONFIGS, type TcgSlug } from "../lib/tcg.config";
-import type { Product } from "../lib/products";
+import type { ApiResponse } from "../lib/products";
+import { loadApiResponseCached } from "../lib/serverProducts";
 import styles from "../styles/Movers.module.css";
 
 /**
@@ -15,22 +17,50 @@ import styles from "../styles/Movers.module.css";
  *
  * PriceCharting and Pokecompare both organise around the set, because that is
  * how buyers think ("what's Bloomburrow going for?"). It is also the page shape
- * that ranks, which makes this the natural first slice of server-rendering.
+ * that ranks — which it could not do while the set list only existed after the
+ * client had mounted and fetched. Both games' lists are now server-rendered.
+ *
+ * Both, rather than one, because the game comes from a query string that
+ * getStaticProps cannot see. The lists are one row per set, so carrying the
+ * pair costs far less than the catalogue would.
  */
 
-type ApiResponse = { products: Product[] };
 const fetcher = (url: string) => fetch(url).then((r) => r.json()) as Promise<ApiResponse>;
 
-export default function SetsPage() {
+type SetRow = { set: string; count: number; cheapest: number };
+type Props = { initialSets: Record<string, SetRow[]> };
+
+export const getStaticProps: GetStaticProps<Props> = async () => {
+  const initialSets: Record<string, SetRow[]> = {};
+  for (const game of ["pokemon", "mtg"] as const) {
+    try {
+      const feed = await loadApiResponseCached(TCG_CONFIGS[game]);
+      initialSets[game] = setsWithCounts(feed.products);
+    } catch (err) {
+      // One game's feed being unavailable should not blank the other.
+      console.error(`[sets] getStaticProps failed for ${game}:`, err);
+      initialSets[game] = [];
+    }
+  }
+  return { props: { initialSets }, revalidate: 900 };
+};
+
+export default function SetsPage({ initialSets }: Props) {
   const router = useRouter();
   const tcg: TcgSlug = (router.query.tcg as TcgSlug) in TCG_CONFIGS
     ? (router.query.tcg as TcgSlug) : "pokemon";
   const config = TCG_CONFIGS[tcg];
 
-  const { data, error, isLoading } = useSWR<ApiResponse>(`/api/products?tcg=${tcg}`, fetcher, {
+  const { data, error } = useSWR<ApiResponse>(`/api/products?tcg=${tcg}`, fetcher, {
     revalidateOnFocus: false,
   });
-  const sets = setsWithCounts(data?.products ?? []);
+
+  // Prefer freshly fetched sets, fall back to what was rendered on the server.
+  // Never show a loading state over a list we already have: that is what hid
+  // the server-rendered products on the listing pages.
+  const fetched = data?.products ? setsWithCounts(data.products) : null;
+  const sets = fetched?.length ? fetched : initialSets[tcg] ?? [];
+  const isLoading = !data && sets.length === 0;
 
   return (
     <>
