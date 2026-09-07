@@ -517,7 +517,16 @@ export function toApiResponse(
       // a shop titling a $6.99 pack "Booster Box" next to five real boxes at
       // $599-$808. Only fires below a tenth of the group median, which is far
       // outside any real sealed discount.
-      const groupPrices = [...rawRetailers.map((r) => r.price), bestPrice.price];
+      // byGroup already holds every listing in the group, the best one
+      // included. Appending bestPrice again counted it twice and pulled the
+      // median toward it — which is exactly the wrong direction, since the
+      // listing under suspicion is the one doing the pulling. Two groups
+      // survived the filter that way.
+      const groupPrices = rawRetailers.some(
+        (r) => r.retailer === bestPrice.retailer && r.price === bestPrice.price
+      )
+        ? rawRetailers.map((r) => r.price)
+        : [...rawRetailers.map((r) => r.price), bestPrice.price];
       const floor = implausibleFloor(groupPrices);
       const allRetailers = floor === null
         ? rawRetailers

@@ -70,3 +70,21 @@ describe("isImplausiblyCheap", () => {
     expect(isImplausiblyCheap(90, [90, 100, 110])).toBe(false);
   });
 });
+
+describe("median dilution", () => {
+  it("a duplicated outlier can hide itself", () => {
+    // Why the fix matters: counting the suspect listing twice pulls the median
+    // toward it, and it stops looking like an outlier.
+    const honest = [92.46, 949.95, 1025.34];
+    const doubled = [92.46, 92.46, 949.95, 1025.34];
+    expect(isImplausiblyCheap(92.46, honest)).toBe(true);
+    expect(isImplausiblyCheap(92.46, doubled)).toBe(false);
+  });
+
+  it("catches a group where two listings are bad", () => {
+    // Mega Evolution Chaos Rising: two pack prices, two real box prices.
+    const prices = [8.95, 8.99, 241.86, 324.99];
+    expect(isImplausiblyCheap(8.95, prices)).toBe(true);
+    expect(isImplausiblyCheap(241.86, prices)).toBe(false);
+  });
+});
