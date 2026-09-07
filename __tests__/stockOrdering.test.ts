@@ -23,6 +23,13 @@ describe("isSoldOutEverywhere", () => {
   it("is true for a single sold-out listing with no other retailers", () => {
     expect(isSoldOutEverywhere(p("a", 10, false))).toBe(true);
   });
+
+  it("does not throw when other_retailers is absent", () => {
+    // The in-stock path short-circuits before reading it, so a trimmed payload
+    // would only blow up on sold-out products — the ones this is asked about.
+    expect(isSoldOutEverywhere({ in_stock: false } as never)).toBe(true);
+    expect(isSoldOutEverywhere({ in_stock: true } as never)).toBe(false);
+  });
 });
 
 describe("buyableFirst", () => {

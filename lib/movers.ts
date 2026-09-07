@@ -11,7 +11,7 @@
  *     was regrouped or a retailer mis-listed rather than a genuine price change
  */
 import type { Product } from "./products";
-import { hasReliableLow } from "./products";
+import { isSoldOutEverywhere, hasReliableLow } from "./products";
 
 export const MIN_MOVE_PCT = 5;
 export const MIN_PRICE = 15;
@@ -28,6 +28,12 @@ export type Movers = {
 function credible(product: Product, field: MoverWindow): boolean {
   const change = product[field];
   if (change === null || change === undefined) return false;
+  // A drop you cannot act on is not a mover. The crawler holds a listing's last
+  // price after it sells out, so a product that fell and then sold out would sit
+  // at the top of "biggest drops" pointing at something nobody can buy. The
+  // digest and the alert rules already exclude sold-out products; this is the
+  // page that did not.
+  if (isSoldOutEverywhere(product)) return false;
   if (product.price < MIN_PRICE) return false;
   if (Math.abs(change) < MIN_MOVE_PCT) return false;
   if (Math.abs(change) > MAX_CREDIBLE_MOVE_PCT) return false;

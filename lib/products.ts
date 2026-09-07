@@ -612,9 +612,12 @@ export function leanForSsr(product: Product): Product {
  */
 export function isSoldOutEverywhere(p: {
   in_stock: boolean;
-  other_retailers: { in_stock: boolean }[];
+  other_retailers?: { in_stock: boolean }[];
 }): boolean {
-  return !p.in_stock && !p.other_retailers.some((r) => r.in_stock);
+  // other_retailers is optional rather than required: the in-stock case
+  // short-circuits before reading it, so a payload missing the field would
+  // throw only for sold-out products — the exact case this is asked about.
+  return !p.in_stock && !(p.other_retailers ?? []).some((r) => r.in_stock);
 }
 
 /**
