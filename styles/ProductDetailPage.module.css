@@ -442,3 +442,6 @@
     justify-content: center;
   }
 }
+
+/* The verdict chips need room to breathe under the price. */
+.heroVerdict { margin: 10px 0 0; display: flex; flex-wrap: wrap; gap: 6px; }

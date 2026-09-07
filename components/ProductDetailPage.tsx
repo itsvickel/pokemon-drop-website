@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import PriceVerdict from "./PriceVerdict";
 import Head from "next/head";
 import Link from "next/link";
 import { absoluteUrl } from "../lib/siteUrl";
@@ -264,6 +265,21 @@ export default function ProductDetailPage({ tcg, groupKey, initialProduct = null
                 </div>
 
                 <p className={styles.heroRetailer}>Best price @ {product.retailer}</p>
+
+                {/* Full, non-compact verdict. The grid card renders the compact
+                    form, where the percentile, cross-shop and stale-price chips
+                    are suppressed for space and survive only as a tooltip —
+                    which on a touch screen means not at all. This page has the
+                    room, and is where someone deciding whether to buy is
+                    looking. */}
+                <div className={styles.heroVerdict}>
+                  <PriceVerdict
+                    price={product.price}
+                    history={product.history}
+                    retailer={product.retailer}
+                    otherPrices={(product.other_retailers ?? []).map((r) => r.price)}
+                  />
+                </div>
 
                 <div className={styles.heroActions}>
                   <a
