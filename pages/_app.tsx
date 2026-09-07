@@ -1,9 +1,31 @@
 import type { AppProps } from "next/app";
 import Head from "next/head";
+import { useEffect } from "react";
 import { RETAILER_CLAIM, UPDATE_CADENCE } from "../lib/siteFacts";
 import "../styles/globals.css";
 
+/**
+ * Registers the service worker, which caches only Next's immutable build
+ * output — never HTML or prices. Registration is deferred to load so it never
+ * competes with the first render.
+ */
+function useServiceWorker() {
+  useEffect(() => {
+    if (typeof window === "undefined" || !("serviceWorker" in navigator)) return;
+    if (process.env.NODE_ENV !== "production") return;
+    const register = () => {
+      navigator.serviceWorker.register("/sw.js").catch((err) => {
+        // A failed registration must never surface to the reader.
+        console.warn("[sw] registration failed:", err);
+      });
+    };
+    if (document.readyState === "complete") register();
+    else window.addEventListener("load", register, { once: true });
+  }, []);
+}
+
 export default function App({ Component, pageProps }: AppProps) {
+  useServiceWorker();
   return (
     <>
       <Head>
@@ -23,7 +45,13 @@ export default function App({ Component, pageProps }: AppProps) {
         />
         <meta name="theme-color" content="#0d1117" />
         <meta name="color-scheme" content="dark" />
-        <link rel="icon" href="/favicon.ico" />
+        {/* There is no favicon.ico in public/, so pointing at one just 404s on
+            every page load. The SVG icon doubles as the tab icon. */}
+        <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/icon.svg" />
+        <link rel="manifest" href="/manifest.webmanifest" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-title" content="TCG Drop" />
       </Head>
       <Component {...pageProps} />
     </>

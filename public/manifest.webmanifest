@@ -1,0 +1,21 @@
+{
+  "name": "TCG Drop — Canadian Card Prices",
+  "short_name": "TCG Drop",
+  "description": "Live Pokemon TCG and Magic prices across Canadian retailers, with drop times and price history.",
+  "start_url": "/pokemon/sealed",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0d1117",
+  "theme_color": "#0d1117",
+  "categories": ["shopping", "utilities"],
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/icon-maskable.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Upcoming drops", "url": "/drops", "description": "When and where the next drops go live" },
+    { "name": "Price movers", "url": "/movers", "description": "Biggest price moves this week" },
+    { "name": "Best basket", "url": "/cart", "description": "Cheapest way to buy your list" }
+  ]
+}

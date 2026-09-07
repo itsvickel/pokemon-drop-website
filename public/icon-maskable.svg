@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="TCG Drop">
+  <rect width="512" height="512" fill="#0d1117"/>
+  <g transform="translate(256 256) scale(0.72) translate(-256 -256)">
+    <g transform="rotate(-12 256 256)">
+      <rect x="150" y="112" width="212" height="288" rx="20" fill="#161b22" stroke="#30363d" stroke-width="10"/>
+      <rect x="178" y="140" width="156" height="112" rx="10" fill="#21262d"/>
+    </g>
+    <path d="M256 226 v130 M256 372 l-52-56 M256 372 l52-56"
+          fill="none" stroke="#3fb950" stroke-width="30"
+          stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
