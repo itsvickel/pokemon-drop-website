@@ -145,6 +145,12 @@ export type ApiResponse = {
   products: Product[];
   generated_at: string;
   retailers_count: number;
+  /**
+   * Totals for the WHOLE catalogue, not just the products in this response.
+   * The sub-nav shows both tab counts, so a view-scoped payload still has to
+   * say how many are on the other tab.
+   */
+  counts?: { sealed: number; singles: number };
 };
 
 // ── Numeric helpers ───────────────────────────────────────────────────────────
@@ -199,17 +205,50 @@ export function hasReliableLow(
 }
 
 /**
- * Points kept per product in the list payload. The grid draws a ~40px
- * sparkline, so the tail is all it can render; the full series is served by
- * /api/product/[group_key] for the detail view.
+ * Points kept per product in the list payload.
+ *
+ * The grid draws a ~40px sparkline, which cannot resolve more than about ten
+ * points anyway, and the full series is one request away at
+ * /api/product/[group_key]. Was 30; dropped to 10 when the store registry made
+ * the catalogue several times larger and history was still 44% of the payload.
  */
-export const LIST_HISTORY_POINTS = 30;
+export const LIST_HISTORY_POINTS = 10;
 
 /**
  * Trim a product for the list payload. History was 59% of a 6.8 MB response
  * (69,751 points, median 11 each), downloaded and parsed every five minutes to
  * draw a sparkline that cannot show most of it.
  */
+export type ListView = "sealed" | "singles" | "all";
+
+/**
+ * Cut the list payload down to one view.
+ *
+ * /mtg/sealed and /mtg/singles each downloaded the entire catalogue and then
+ * filtered client-side, so every visitor paid for the half they were not
+ * looking at — and `card` enrichment, 14% of the payload, only ever renders on
+ * the singles page.
+ */
+export function scopeForView(products: Product[], view: ListView): Product[] {
+  if (view === "all") return products;
+  const wantSingles = view === "singles";
+  return products
+    .filter((p) => (p.category === "single") === wantSingles)
+    .map((p) => {
+      if (wantSingles) return p;
+      // Sealed cards never read `card`, so it is pure weight there.
+      const { card, ...rest } = p;
+      void card;
+      return rest as Product;
+    });
+}
+
+export function catalogueCounts(products: Product[]): { sealed: number; singles: number } {
+  let singles = 0;
+  for (const p of products) if (p.category === "single") singles += 1;
+  return { singles, sealed: products.length - singles };
+}
+
 export function slimProduct(product: Product): Product {
   const history = product.history ?? [];
   if (history.length <= LIST_HISTORY_POINTS) return product;

@@ -1,7 +1,7 @@
 import type { GetStaticProps } from "next";
 import { loadApiResponseCached } from "../../lib/serverProducts";
 import { TCG_CONFIGS } from "../../lib/tcg.config";
-import { leanForSsr, type Product } from "../../lib/products";
+import { leanForSsr, scopeForView, type Product } from "../../lib/products";
 
 const SSR_SLICE = 24;
 
@@ -24,9 +24,7 @@ type Props = {
 export const getStaticProps: GetStaticProps<Props> = async () => {
   try {
     const feed = await loadApiResponseCached(TCG_CONFIGS.mtg);
-    const scoped = feed.products.filter((p) =>
-      p.category === "single"
-    );
+    const scoped = scopeForView(feed.products, "singles");
     return {
       props: {
         initialProducts: scoped.slice(0, SSR_SLICE).map(leanForSsr),

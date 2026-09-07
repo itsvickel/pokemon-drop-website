@@ -19,11 +19,9 @@ import { itemListJsonLd, jsonLdString } from "../lib/structuredData";
 import { absoluteUrl } from "../lib/siteUrl";
 import { useCollection } from "../hooks/useCollection";
 
-type ApiResponse = {
-  products: Product[];
-  generated_at: string;
-  retailers_count: number;
-};
+// The canonical response shape lives in lib/products; a local copy is how
+// the Product type drifted before.
+import type { ApiResponse } from "../lib/products";
 
 type SortOption = "price_asc" | "delivered" | "price_desc" | "drop" | "atl_pct" | "deal" | "updated" | "name";
 const VALID_SORTS: SortOption[] = ["price_asc", "delivered", "price_desc", "drop", "atl_pct", "deal", "updated", "name"];
@@ -129,7 +127,7 @@ export default function ProductsPage({
       }
     : undefined;
 
-  const { data, error, isLoading } = useSWR<ApiResponse>(`/api/products?tcg=${tcg}`, fetcher, {
+  const { data, error, isLoading } = useSWR<ApiResponse>(`/api/products?tcg=${tcg}&view=sealed`, fetcher, {
     refreshInterval: REFRESH_MS,
     revalidateOnFocus: false,
     // Seeds the first render from the server slice, then revalidates to the
@@ -212,18 +210,13 @@ export default function ProductsPage({
 
   // ── Sealed / Singles view split ──────────────────────────────────────────
   // Older cached payloads may lack `category`; treat those as sealed.
-  const singlesCount = useMemo(
-    () => allProducts.filter((p) => p.category === "single").length,
-    [allProducts]
-  );
-  const sealedCount = allProducts.length - singlesCount;
-  const products = useMemo(
-    () =>
-      view === "singles"
-        ? allProducts.filter((p) => p.category === "single")
-        : allProducts.filter((p) => p.category !== "single"),
-    [allProducts, view]
-  );
+  // Counts describe the WHOLE catalogue, which this response no longer carries:
+  // the payload is scoped to one view so a visitor does not download the half
+  // they are not looking at. The API reports both totals alongside it.
+  const singlesCount = data?.counts?.singles ?? 0;
+  const sealedCount = data?.counts?.sealed ?? allProducts.length;
+  // The API already scoped this to the requested view, so no second filter.
+  const products = allProducts;
 
   // ── Auto-open detail modal from ?alert=group_key ─────────────────────────
   useEffect(() => {

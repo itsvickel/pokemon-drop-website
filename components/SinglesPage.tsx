@@ -13,11 +13,9 @@ import { TCG_CONFIGS, type TcgSlug } from "../lib/tcg.config";
 import styles from "../styles/Singles.module.css";
 import { sizedImage, THUMB } from "../lib/images";
 
-type ApiResponse = {
-  products: Product[];
-  generated_at: string;
-  retailers_count: number;
-};
+// The canonical response shape lives in lib/products; a local copy is how
+// the Product type drifted before.
+import type { ApiResponse } from "../lib/products";
 
 type SortOption = "below_market" | "price_asc" | "price_desc" | "drop" | "name";
 const VALID_SORTS: SortOption[] = ["below_market", "price_asc", "price_desc", "drop", "name"];
@@ -62,7 +60,7 @@ export default function SinglesPage({ tcg, initialProducts }: Props) {
     return () => { document.documentElement.removeAttribute("data-tcg"); };
   }, [tcg]);
 
-  const { data, error, isLoading } = useSWR<ApiResponse>(`/api/products?tcg=${tcg}`, fetcher, {
+  const { data, error, isLoading } = useSWR<ApiResponse>(`/api/products?tcg=${tcg}&view=singles`, fetcher, {
     refreshInterval: REFRESH_MS,
     revalidateOnFocus: false,
     // Seeds the first render from the server slice; SWR then revalidates to the

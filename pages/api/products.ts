@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getTcgConfig } from "../../lib/tcg.config";
 import { loadApiResponse } from "../../lib/serverProducts";
-import { slimProduct, type ApiResponse } from "../../lib/products";
+import { catalogueCounts, scopeForView, slimProduct, type ApiResponse, type ListView } from "../../lib/products";
 
 export type {
   RetailerPrice,
@@ -36,7 +36,14 @@ export default async function handler(
     return;
   }
 
-  const cached = responseCache.get(config.slug);
+  // Cache per (game, view): the sealed and singles payloads are now different
+  // documents, so one shared entry would serve the wrong one.
+  const viewParam = typeof req.query.view === "string" ? req.query.view : "all";
+  const view: ListView =
+    viewParam === "sealed" || viewParam === "singles" ? viewParam : "all";
+  const cacheKey = `${config.slug}:${view}`;
+
+  const cached = responseCache.get(cacheKey);
   if (cached && cached.expiresAt > Date.now()) {
     res.status(200).json(cached.payload);
     return;
@@ -47,10 +54,15 @@ export default async function handler(
     // Price history was 59% of this response and the grid can only draw its
     // tail, so the list ships a trimmed slice. `?full=1` opts out, and
     // /api/product/[group_key] serves the complete series for one product.
+    const counts = catalogueCounts(full.products);
     const payload: ApiResponse = req.query.full === "1"
-      ? full
-      : { ...full, products: full.products.map(slimProduct) };
-    responseCache.set(config.slug, { expiresAt: Date.now() + CACHE_TTL_MS, payload });
+      ? { ...full, counts }
+      : {
+          ...full,
+          counts,
+          products: scopeForView(full.products, view).map(slimProduct),
+        };
+    responseCache.set(cacheKey, { expiresAt: Date.now() + CACHE_TTL_MS, payload });
     res.status(200).json(payload);
   } catch (error) {
     // Detail carries the data-repo URL and part of the upstream body, so it is

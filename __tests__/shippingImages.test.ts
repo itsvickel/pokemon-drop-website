@@ -6,7 +6,7 @@ import {
   shippingLabel,
 } from "../lib/shipping";
 import { DETAIL, THUMB, sizedImage, thumbSrcSet } from "../lib/images";
-import { historySpanDays, hasReliableLow, slimProduct, LIST_HISTORY_POINTS , type Product } from "../lib/products";
+import { historySpanDays, hasReliableLow, slimProduct, scopeForView, catalogueCounts, LIST_HISTORY_POINTS, type Product } from "../lib/products";
 import { LOW_BADGE_MIN_DAYS, RETAILER_CLAIM, UPDATE_CADENCE } from "../lib/siteFacts";
 
 describe("shipping policies", () => {
@@ -226,5 +226,49 @@ describe("list payload trimming", () => {
 
   it("falls back to measuring history when history_days is absent", () => {
     expect(hasReliableLow({ history: [entry(0), entry(1)] })).toBe(false);
+  });
+});
+
+describe("view scoping", () => {
+  const p = (key: string, category: "sealed" | "single", withCard = false) =>
+    ({
+      group_key: key, category, history: [], history_days: 0,
+      ...(withCard ? { card: { card_name: key, image_url: "x" } } : {}),
+    } as unknown as Product);
+
+  it("returns only the requested category", () => {
+    const rows = [p("a", "sealed"), p("b", "single"), p("c", "sealed")];
+    expect(scopeForView(rows, "sealed").map((x) => x.group_key)).toEqual(["a", "c"]);
+    expect(scopeForView(rows, "singles").map((x) => x.group_key)).toEqual(["b"]);
+  });
+
+  it("drops card enrichment from the sealed view, which never reads it", () => {
+    // card was 14% of the payload and only ever renders on the singles page.
+    const [only] = scopeForView([p("a", "sealed", true)], "sealed");
+    expect("card" in only).toBe(false);
+  });
+
+  it("keeps card enrichment for singles, which needs the image", () => {
+    const [only] = scopeForView([p("b", "single", true)], "singles");
+    expect(only.card).toBeDefined();
+  });
+
+  it("passes everything through for the unscoped view", () => {
+    const rows = [p("a", "sealed", true), p("b", "single")];
+    expect(scopeForView(rows, "all")).toHaveLength(2);
+    expect(scopeForView(rows, "all")[0].card).toBeDefined();
+  });
+
+  it("counts the whole catalogue regardless of scoping", () => {
+    // The sub-nav shows both tab counts, so a scoped payload still has to say
+    // how many are on the other tab.
+    const counts = catalogueCounts([p("a", "sealed"), p("b", "single"), p("c", "single")]);
+    expect(counts).toEqual({ sealed: 1, singles: 2 });
+  });
+
+  it("keeps the sparkline window small enough to matter", () => {
+    // A 40px sparkline cannot resolve more than about ten points, and history
+    // was 44% of the payload.
+    expect(LIST_HISTORY_POINTS).toBeLessThanOrEqual(12);
   });
 });
