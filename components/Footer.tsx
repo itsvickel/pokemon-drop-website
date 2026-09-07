@@ -1,3 +1,4 @@
+import { UPDATE_CADENCE } from "../lib/siteFacts";
 import styles from "../styles/Footer.module.css";
 
 type Props = {
@@ -24,7 +25,7 @@ export default function Footer({ syncedAt, retailersCount, productsCount }: Prop
         <div className={styles.col}>
           <span className={styles.brand}>TCG Drop</span>
           <span className={styles.tagline}>
-            Canadian retail prices, auto-refreshed every 3 hours
+            Canadian retail prices, refreshed {UPDATE_CADENCE}
           </span>
         </div>
         <div className={styles.col}>

@@ -488,7 +488,7 @@ export default function ProductsPage({
           <h1 className={styles.heroTitle}>{config.displayName}</h1>
           <p className={styles.heroTagline}>
             Track {viewNoun} prices across {stats.retailers || data?.retailers_count || 20}+ Canadian retailers.
-            Prices updated automatically every 3 hours.
+            Prices updated automatically {UPDATE_CADENCE}.
           </p>
           <div className={styles.heroStats}>
             <div className={styles.heroStat}>

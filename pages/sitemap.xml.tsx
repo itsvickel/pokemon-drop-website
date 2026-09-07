@@ -2,6 +2,8 @@ import type { GetServerSideProps } from "next";
 import { TCG_CONFIGS } from "../lib/tcg.config";
 import { loadApiResponse } from "../lib/serverProducts";
 import { SITE_URL } from "../lib/siteUrl";
+import { summariseRetailers } from "../lib/retailers";
+import type { Product } from "../lib/products";
 
 const SITE = SITE_URL;
 const ACTIVE_GAMES = ["pokemon", "mtg"] as const;
@@ -23,12 +25,16 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     entries.push(url(`${SITE}/sets?tcg=${tcg}`, "weekly", "0.7"));
   }
   entries.push(url(`${SITE}/drops`, "daily", "0.8"));
+  entries.push(url(`${SITE}/retailers`, "weekly", "0.7"));
   entries.push(url(`${SITE}/calendar`, "weekly", "0.7"));
 
-  // Product pages — the long tail
+  // Product pages — the long tail. The feeds are kept so the retailer pages
+  // can be listed from the same load rather than fetching them twice.
+  const feeds: { game: string; products: Product[] }[] = [];
   for (const tcg of ACTIVE_GAMES) {
     try {
       const feed = await loadApiResponse(TCG_CONFIGS[tcg]);
+      feeds.push({ game: tcg, products: feed.products });
       for (const product of feed.products) {
         entries.push(
           url(`${SITE}/${tcg}/${encodeURIComponent(product.group_key)}`, "daily", "0.5")
@@ -37,6 +43,12 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     } catch {
       // Feed unavailable — ship the static entries rather than failing
     }
+  }
+
+  // One page per retailer. Listed from live data rather than a hardcoded list,
+  // so a shop the crawler picked up this morning is discoverable today.
+  for (const retailer of summariseRetailers(feeds)) {
+    entries.push(url(`${SITE}/retailers/${retailer.slug}`, "weekly", "0.6"));
   }
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>

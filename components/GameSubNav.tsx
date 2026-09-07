@@ -65,6 +65,9 @@ export default function GameSubNav({ tcg, active, sealedCount, singlesCount }: P
         <Link href={`/calendar?tcg=${tcg}`} className={styles.item}>
           📅 Calendar
         </Link>
+        <Link href="/retailers" className={styles.item}>
+          Shops
+        </Link>
         <Link href="/collection" className={styles.item}>
           📦 Collection
         </Link>
