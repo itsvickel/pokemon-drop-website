@@ -6,7 +6,7 @@ import {
   shippingLabel,
 } from "../lib/shipping";
 import { DETAIL, THUMB, sizedImage, thumbSrcSet } from "../lib/images";
-import { historySpanDays, hasReliableLow, slimProduct, LIST_HISTORY_POINTS } from "../lib/products";
+import { historySpanDays, hasReliableLow, slimProduct, LIST_HISTORY_POINTS , type Product } from "../lib/products";
 import { LOW_BADGE_MIN_DAYS, RETAILER_CLAIM, UPDATE_CADENCE } from "../lib/siteFacts";
 
 describe("shipping policies", () => {
@@ -190,7 +190,7 @@ describe("site claims", () => {
 describe("list payload trimming", () => {
   const entry = (i: number) => ({ date: `2026-01-${String((i % 28) + 1).padStart(2, "0")}`, price: 10 + i, retailer: "X" });
   const product = (n: number) =>
-    ({ group_key: "k", history: Array.from({ length: n }, (_, i) => entry(i)), history_days: 90 } as never);
+    ({ group_key: "k", history: Array.from({ length: n }, (_, i) => entry(i)), history_days: 90 } as unknown as Product);
 
   it("keeps short histories untouched", () => {
     const p = product(5);

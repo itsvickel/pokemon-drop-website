@@ -1,0 +1,130 @@
+/* Shared by /movers, /sets and /sets/[slug] — all three are dense scannable
+   lists rather than card grids, so they share one vocabulary. */
+
+.page { max-width: 1100px; margin: 0 auto; padding: 24px 16px 64px; }
+
+.header { margin-bottom: 26px; }
+.back { color: #58a6ff; text-decoration: none; font-size: 0.86rem; display: inline-block; margin-bottom: 8px; }
+.back:hover { text-decoration: underline; }
+
+.title { font-size: 1.8rem; font-weight: 700; color: #c9d1d9; margin: 0 0 6px; }
+.subtitle { color: #8b949e; font-size: 0.93rem; margin: 0; max-width: 68ch; line-height: 1.55; }
+
+.tabs { display: flex; gap: 6px; margin-top: 16px; flex-wrap: wrap; }
+.tab {
+  font: inherit;
+  font-size: 0.82rem;
+  color: #8b949e;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 5px 12px;
+  cursor: pointer;
+}
+.tab:hover { border-color: #58a6ff; color: #c9d1d9; }
+.tab:focus-visible { outline: 2px solid #58a6ff; outline-offset: 2px; }
+.tabOn { background: var(--game, #58a6ff); border-color: var(--game, #58a6ff); color: #0d1117; font-weight: 600; }
+
+.state {
+  color: #8b949e;
+  font-size: 0.95rem;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  padding: 18px 20px;
+  max-width: 66ch;
+  line-height: 1.6;
+}
+.state a { color: #58a6ff; }
+
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px; }
+.col { min-width: 0; }
+
+.colTitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #c9d1d9;
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #21262d;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.count {
+  font-size: 0.72rem;
+  color: #8b949e;
+  background: #21262d;
+  border-radius: 20px;
+  padding: 1px 8px;
+  font-weight: 600;
+}
+
+.list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1px; }
+
+.row {
+  display: grid;
+  grid-template-columns: 40px 1fr auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 10px;
+  background: #161b22;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  min-width: 0;
+}
+.row:hover { border-color: #30363d; }
+
+.thumb { width: 40px; height: 40px; object-fit: contain; border-radius: 4px; background: #0d1117; }
+.thumbBlank { width: 40px; height: 40px; border-radius: 4px; background: #0d1117; display: block; }
+
+.body { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.name {
+  color: #c9d1d9;
+  font-size: 0.88rem;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.name:hover { color: var(--game, #58a6ff); text-decoration: underline; }
+.meta { color: #6e7681; font-size: 0.74rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.price { font-variant-numeric: tabular-nums; color: #c9d1d9; font-size: 0.88rem; font-weight: 600; white-space: nowrap; }
+.change { font-variant-numeric: tabular-nums; font-size: 0.82rem; font-weight: 700; white-space: nowrap; min-width: 62px; text-align: right; }
+.up { color: #f85149; }
+.down { color: #3fb950; }
+
+/* ── Set index ── */
+
+.setGrid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+}
+.setCard { min-width: 0; }
+.setLink {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: border-color 0.15s;
+}
+.setLink:hover { border-color: var(--game, #58a6ff); }
+.setLink:focus-visible { outline: 2px solid #58a6ff; outline-offset: 2px; }
+.setName { color: #c9d1d9; font-weight: 600; font-size: 0.92rem; line-height: 1.3; overflow-wrap: anywhere; }
+.setMeta { color: #8b949e; font-size: 0.76rem; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 560px) {
+  .row { grid-template-columns: 32px 1fr auto; gap: 9px; }
+  .thumb, .thumbBlank { width: 32px; height: 32px; }
+  .change { grid-column: 3; min-width: 0; }
+  .price { grid-column: 3; }
+}

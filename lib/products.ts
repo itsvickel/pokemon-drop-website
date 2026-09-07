@@ -7,6 +7,8 @@
  */
 import type { TcgConfig } from "./tcg.config";
 import { LOW_BADGE_MIN_DAYS } from "./siteFacts";
+import { changeOver, pricePerPack } from "./insights";
+import { computePackCount } from "./packCount";
 
 // ── Raw scraper shapes ────────────────────────────────────────────────────────
 
@@ -115,6 +117,13 @@ export type Product = {
    * newly tracked and silently suppress the low badge.
    */
   history_days: number;
+  /** Percent change over 1 and 30 days. 7-day lives in price_change_7d. */
+  price_change_1d: number | null;
+  price_change_30d: number | null;
+  /** Boosters in this product, when derivable — lets a box and a pack compare. */
+  pack_count: number | null;
+  /** Cost of one booster. Null when pack_count is unknown. */
+  price_per_pack: number | null;
   image_url: string;
   other_retailers: RetailerPrice[];
   is_new: boolean;
@@ -450,6 +459,7 @@ export function toApiResponse(
       const bestRetailerEntry = allRetailers.find(r => r.retailer === bestPrice.retailer);
       const inStock = bestRetailerEntry ? bestRetailerEntry.in_stock : true;
 
+      const packCount = computePackCount(bestPrice.name);
       const msrp = msrpPrices.get(group_key) ?? null;
       const deal_score = computeDealScore(bestPrice.price, allTimeLow, sevenDayChange, msrp);
 
@@ -465,6 +475,10 @@ export function toApiResponse(
         price_change_7d: sevenDayChange,
         history: entries,
         history_days: historySpanDays(entries),
+        price_change_1d: changeOver(entries, bestPrice.price, 1),
+        price_change_30d: changeOver(entries, bestPrice.price, 30),
+        pack_count: packCount,
+        price_per_pack: pricePerPack(bestPrice.price, packCount),
         image_url: bestPrice.image_url ?? "",
         other_retailers: otherRetailers,
         is_new: isNew,

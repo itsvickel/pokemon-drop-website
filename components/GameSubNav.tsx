@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { TcgSlug } from "../lib/tcg.config";
 import styles from "../styles/GameSubNav.module.css";
 
-export type GameSection = "sealed" | "singles" | "deals";
+export type GameSection = "sealed" | "singles" | "deals" | "movers" | "sets";
 
 type Props = {
   tcg: TcgSlug;
@@ -44,6 +44,20 @@ export default function GameSubNav({ tcg, active, sealedCount, singlesCount }: P
           aria-current={active === "deals" ? "page" : undefined}
         >
           🔥 Deals
+        </Link>
+        <Link
+          href={`/movers?tcg=${tcg}`}
+          className={`${styles.item} ${active === "movers" ? styles.itemActive : ""}`}
+          aria-current={active === "movers" ? "page" : undefined}
+        >
+          📈 Movers
+        </Link>
+        <Link
+          href={`/sets?tcg=${tcg}`}
+          className={`${styles.item} ${active === "sets" ? styles.itemActive : ""}`}
+          aria-current={active === "sets" ? "page" : undefined}
+        >
+          🗂️ Sets
         </Link>
         <Link href={`/drops?tcg=${tcg}`} className={styles.item}>
           📡 Drops
