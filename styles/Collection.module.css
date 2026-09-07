@@ -1,0 +1,175 @@
+/* Collection / portfolio. The summary is the point of the page — someone opens
+   it to see one number — so the totals lead and the holdings list is secondary. */
+
+.page { max-width: 1000px; margin: 0 auto; padding: 24px 16px 64px; }
+
+.header { margin-bottom: 24px; }
+.title { font-size: 1.8rem; font-weight: 700; color: #c9d1d9; margin: 0 0 6px; }
+.subtitle { color: #8b949e; font-size: 0.93rem; margin: 0; max-width: 66ch; line-height: 1.55; }
+
+.state, .coverage, .error, .notice {
+  color: #8b949e;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  padding: 16px 18px;
+  max-width: 68ch;
+}
+.coverage { border-left: 3px solid #d29922; margin: 18px 0 0; font-size: 0.86rem; }
+.error { border-left: 3px solid #f85149; margin-top: 16px; }
+.notice { border-left: 3px solid #3fb950; margin-top: 14px; }
+
+/* ── Sign in ── */
+
+.signIn {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  padding: 26px 24px;
+  max-width: 520px;
+}
+.signInTitle { font-size: 1.1rem; font-weight: 700; color: #c9d1d9; margin: 0 0 6px; }
+.signInText { color: #8b949e; font-size: 0.9rem; line-height: 1.55; margin: 0 0 16px; }
+.signInForm { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.input {
+  flex: 1 1 220px;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  color: #c9d1d9;
+  padding: 9px 12px;
+  font: inherit;
+  font-size: 0.9rem;
+}
+.input:focus-visible { outline: 2px solid #58a6ff; outline-offset: 1px; }
+
+.primaryBtn {
+  background: var(--game, #58a6ff);
+  color: #0d1117;
+  border: none;
+  border-radius: 6px;
+  padding: 9px 16px;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.primaryBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+.primaryBtn:focus-visible { outline: 2px solid #58a6ff; outline-offset: 2px; }
+
+/* ── Totals ── */
+
+.totals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.totalCard {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-top: 3px solid #30363d;
+  border-radius: 10px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.totalCard.up { border-top-color: #3fb950; }
+.totalCard.down { border-top-color: #f85149; }
+
+.totalLabel {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #8b949e;
+  font-weight: 600;
+}
+.totalValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #c9d1d9;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+.totalSub { font-size: 0.76rem; color: #6e7681; font-variant-numeric: tabular-nums; }
+
+.up .totalValue { color: #3fb950; }
+.down .totalValue { color: #f85149; }
+
+/* ── Holdings ── */
+
+.list { list-style: none; margin: 20px 0 0; padding: 0; display: flex; flex-direction: column; gap: 1px; }
+
+.row {
+  display: grid;
+  grid-template-columns: 40px 1fr auto auto 32px;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  background: #161b22;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  min-width: 0;
+}
+.row:hover { border-color: #30363d; }
+
+.thumb { width: 40px; height: 40px; object-fit: contain; border-radius: 4px; background: #0d1117; }
+.thumbBlank { width: 40px; height: 40px; border-radius: 4px; background: #0d1117; display: block; }
+
+.body { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.name {
+  color: #c9d1d9;
+  font-size: 0.9rem;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.name:hover { color: var(--game, #58a6ff); text-decoration: underline; }
+.meta { color: #6e7681; font-size: 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.value {
+  font-variant-numeric: tabular-nums;
+  color: #c9d1d9;
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+.unvalued { color: #6e7681; font-weight: 400; font-size: 0.8rem; font-style: italic; }
+
+.gain {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85rem;
+  font-weight: 700;
+  min-width: 76px;
+  text-align: right;
+  color: #6e7681;
+  white-space: nowrap;
+}
+.gain.up { color: #3fb950; }
+.gain.down { color: #f85149; }
+
+.removeBtn {
+  background: none;
+  border: none;
+  color: #6e7681;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  line-height: 1;
+}
+.removeBtn:hover { color: #f85149; background: rgba(248, 81, 73, 0.1); }
+.removeBtn:focus-visible { outline: 2px solid #58a6ff; outline-offset: 1px; }
+
+@media (max-width: 560px) {
+  .row { grid-template-columns: 32px 1fr auto 28px; gap: 9px; }
+  .thumb, .thumbBlank { width: 32px; height: 32px; }
+  .gain { grid-column: 3; min-width: 0; }
+  .totalValue { font-size: 1.3rem; }
+}

@@ -26,6 +26,9 @@ export type { Product, RetailerPrice, CardEnrichment, HistoryEntry };
 
 type ProductCardProps = {
   product: Product;
+  /** Adds this product to the signed-in user's collection. Omitted when
+   *  accounts are not configured, so the button simply does not render. */
+  onAddToCollection?: (product: Product) => void;
   onRetailerClick?: (retailer: string) => void;
   activeRetailer?: string;
   isWishlisted?: boolean;
@@ -91,6 +94,7 @@ export default function ProductCard({
   onToggleComparison,
   compareDisabled = false,
   tcg = "pokemon",
+  onAddToCollection,
 }: ProductCardProps) {
   const [showDetail, setShowDetail] = useState(false);
 
@@ -200,6 +204,17 @@ export default function ProductCard({
               title={isWishlisted ? "Remove from My List" : "Save to My List"}
             >
               {isWishlisted ? "♥" : "♡"}
+            </button>
+          )}
+          {onAddToCollection && (
+            <button
+              className={styles.collectBtn}
+              onClick={(e) => { e.stopPropagation(); onAddToCollection(product); }}
+              type="button"
+              aria-label={`Add ${product.name} to my collection`}
+              title="Add to my collection"
+            >
+              +
             </button>
           )}
         </div>

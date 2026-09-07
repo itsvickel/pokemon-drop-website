@@ -644,3 +644,23 @@
   color: var(--muted);
   text-decoration: line-through;
 }
+
+/* Add-to-collection. Sits beside the wishlist heart: one saves what you want,
+   the other records what you already own. */
+.collectBtn {
+  background: rgba(13, 17, 23, 0.75);
+  border: 1px solid #30363d;
+  color: #8b949e;
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  font-size: 1.05rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.collectBtn:hover { color: #3fb950; border-color: #3fb950; }
+.collectBtn:focus-visible { outline: 2px solid #58a6ff; outline-offset: 2px; }

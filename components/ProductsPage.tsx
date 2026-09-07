@@ -17,6 +17,7 @@ import { LOW_LABEL, LOW_LABEL_TITLE, UPDATE_CADENCE, retailerClaim } from "../li
 import { deliveredSortKey } from "../lib/shipping";
 import { itemListJsonLd, jsonLdString } from "../lib/structuredData";
 import { absoluteUrl } from "../lib/siteUrl";
+import { useCollection } from "../hooks/useCollection";
 
 type ApiResponse = {
   products: Product[];
@@ -94,6 +95,22 @@ export default function ProductsPage({
   const config  = TCG_CONFIGS[tcg];
   const router  = useRouter();
   const wishlist = useWishlist();
+  const collection = useCollection();
+
+  // Only offered when accounts are configured and the visitor is signed in —
+  // otherwise the button would lead somewhere they cannot use.
+  const handleAddToCollection = collection.signedIn
+    ? (product: Product) => {
+        void collection.add({
+          group_key: product.group_key,
+          product_name: product.name,
+          tcg,
+          quantity: 1,
+          unit_cost: null,
+          purchased_at: null,
+        });
+      }
+    : undefined;
 
   // Apply game-specific theme to <html> for CSS var inheritance
   useEffect(() => {
@@ -772,6 +789,7 @@ export default function ProductsPage({
               {visibleProducts.map((product) => (
                 <ProductCard
                   key={product.group_key}
+                  onAddToCollection={handleAddToCollection}
                   product={product}
                   tcg={tcg}
                   onRetailerClick={handleRetailerClick}
