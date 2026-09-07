@@ -8,6 +8,7 @@ import { useAuth } from "../hooks/useAuth";
 import { useCollection } from "../hooks/useCollection";
 import { coverageNote, portfolioTotals, valueCollection } from "../lib/collection";
 import { sizedImage, thumbSrcSet, THUMB } from "../lib/images";
+import { downloadCsv, toCsv } from "../lib/csv";
 import type { Product } from "../lib/products";
 import styles from "../styles/Collection.module.css";
 
@@ -53,6 +54,24 @@ export default function CollectionPage() {
   }
 
   const gainClass = totals.gain > 0 ? styles.up : totals.gain < 0 ? styles.down : "";
+
+  // A collection someone spent months entering should not be trapped here.
+  function exportCsv() {
+    const csv = toCsv(
+      ["Product", "Game", "Quantity", "Unit cost (CAD)", "Purchased", "Market price (CAD)", "Market value (CAD)", "Gain (CAD)"],
+      valued.map((v) => [
+        v.product_name || v.group_key,
+        v.tcg,
+        v.quantity,
+        v.unit_cost ?? "",
+        v.purchased_at ?? "",
+        v.marketPrice ?? "",
+        v.marketValue ?? "",
+        v.gain ?? "",
+      ])
+    );
+    downloadCsv(`tcg-drop-collection-${new Date().toISOString().slice(0, 10)}.csv`, csv);
+  }
 
   return (
     <>
@@ -130,6 +149,14 @@ export default function CollectionPage() {
                 </span>
               </div>
             </section>
+
+            {collection.holdings.length > 0 && (
+              <div className={styles.actions}>
+                <button type="button" className={styles.exportBtn} onClick={exportCsv}>
+                  Export CSV
+                </button>
+              </div>
+            )}
 
             {note && <p className={styles.coverage}>{note}</p>}
             {collection.error && <p className={styles.error} role="alert">{collection.error}</p>}

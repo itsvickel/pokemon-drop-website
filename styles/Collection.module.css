@@ -173,3 +173,20 @@
   .gain { grid-column: 3; min-width: 0; }
   .totalValue { font-size: 1.3rem; }
 }
+
+.actions { display: flex; gap: 8px; margin: 14px 0 0; }
+
+/* Deliberately understated: exporting is reassurance that the data is yours,
+   not something to push people toward. */
+.exportBtn {
+  background: none;
+  border: 1px solid #30363d;
+  color: #8b949e;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+.exportBtn:hover { border-color: #58a6ff; color: #c9d1d9; }
+.exportBtn:focus-visible { outline: 2px solid #58a6ff; outline-offset: 2px; }
